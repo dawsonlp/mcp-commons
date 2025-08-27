@@ -1,0 +1,82 @@
+Metadata-Version: 2.4
+Name: mcp-commons
+Version: 1.0.0
+Summary: Shared infrastructure library for MCP (Model Context Protocol) servers
+Author: MCP Commons Contributors
+License-Expression: MIT
+Project-URL: Homepage, https://github.com/dawsonlp/mcp-commons
+Project-URL: Repository, https://github.com/dawsonlp/mcp-commons.git
+Project-URL: Documentation, https://github.com/dawsonlp/mcp-commons#readme
+Project-URL: Issues, https://github.com/dawsonlp/mcp-commons/issues
+Classifier: Development Status :: 4 - Beta
+Classifier: Intended Audience :: Developers
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Programming Language :: Python :: 3.12
+Classifier: Programming Language :: Python :: 3.13
+Classifier: Topic :: Software Development :: Libraries :: Python Modules
+Classifier: Topic :: Internet :: WWW/HTTP :: HTTP Servers
+Requires-Python: >=3.11
+Description-Content-Type: text/markdown
+Requires-Dist: pydantic>=2.0.0
+Requires-Dist: PyYAML>=6.0.0
+Requires-Dist: mcp>=1.13.1
+Provides-Extra: dev
+Requires-Dist: pytest>=7.0.0; extra == "dev"
+Requires-Dist: pytest-asyncio>=0.21.0; extra == "dev"
+Requires-Dist: pytest-cov>=4.0.0; extra == "dev"
+Requires-Dist: mypy>=1.0.0; extra == "dev"
+Requires-Dist: black>=23.0.0; extra == "dev"
+Requires-Dist: isort>=5.0.0; extra == "dev"
+Requires-Dist: ruff>=0.1.0; extra == "dev"
+
+# MCP Commons Library
+
+A shared Python library providing common infrastructure for MCP (Model Context Protocol) servers.
+
+## Features
+
+### MCP Result Adapter
+- **Higher-order function pattern** for converting use case results to MCP format
+- **Eliminates 500+ lines of boilerplate** per server
+- **Framework-agnostic** - works with any use case pattern
+- **Type-safe** with proper signature preservation
+- **Extensible** for different result types
+
+### Use Case Base Classes
+- Standard `UseCaseResult` for consistent return types
+- Error handling patterns
+- Validation utilities
+
+### Testing Utilities
+- Mock factories for MCP testing
+- Test harnesses for use case validation
+
+## Installation
+
+```bash
+pip install mcp-commons
+```
+
+## Quick Start
+
+```python
+from mcp_commons import create_mcp_adapter, UseCaseResult
+
+# Your use case
+async def list_projects(instance_name: str) -> UseCaseResult:
+    # Your business logic here
+    return UseCaseResult.success(data=projects)
+
+# Create MCP-compatible version
+adapted_method = create_mcp_adapter(list_projects)
+tool = Tool.from_function(adapted_method, name="list_projects")
+```
+
+## Architecture Benefits
+
+- **Single Source of Truth**: One implementation of MCP adaptation logic
+- **Consistency**: All servers use identical error handling and response formats  
+- **Maintainability**: Updates to MCP protocol handled in one place
+- **Testability**: Shared test utilities ensure consistent behavior
+- **Versioning**: Servers can depend on specific library versions for stability
