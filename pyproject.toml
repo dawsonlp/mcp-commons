@@ -76,6 +76,8 @@ multi_line_output = 3
 [tool.ruff]
 line-length = 88
 target-version = "py311"
+
+[tool.ruff.lint]
 select = [
     "E",  # pycodestyle errors
     "W",  # pycodestyle warnings  
@@ -87,4 +89,5 @@ select = [
 ]
 ignore = [
     "E501",  # line too long, handled by black
+    "B904",  # raise from within except blocks - too strict for infrastructure code
 ]

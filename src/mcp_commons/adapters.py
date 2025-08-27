@@ -239,7 +239,7 @@ def create_query_adapter(use_case_method: Callable) -> Callable:
     """
 
     def query_success_handler(data: Any) -> dict[str, Any]:
-        if isinstance(data, (list, dict)):
+        if isinstance(data, list | dict):
             return {"data": data}
         else:
             return {"result": data}
