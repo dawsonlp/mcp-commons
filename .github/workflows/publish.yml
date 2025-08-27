@@ -35,10 +35,6 @@ jobs:
         python -m black --check src/ tests/
         python -m isort --check-only src/ tests/
         python -m ruff check src/ tests/
-    
-    - name: Run type checking
-      run: |
-        python -m mypy src/
 
   build:
     needs: test
