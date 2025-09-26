@@ -100,8 +100,12 @@ safe_tool = Tool.from_function(create_mcp_adapter(might_fail), name="safe_operat
 
 ## Requirements
 
-- Python 3.11+
-- MCP SDK 1.13.1+
+- Python 3.11+ (Python 3.13 recommended for optimal performance)
+- MCP SDK 1.15.0+
+- Pydantic 2.11.9+
+- PyYAML 6.0.3+
+
+**Note**: This library has been updated with the latest dependency versions as of September 2025. All dependencies are compatible with Python 3.11-3.13.
 
 ## License
 
