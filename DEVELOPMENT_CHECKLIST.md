@@ -830,28 +830,74 @@ open htmlcov/index.html
 
 ---
 
-#### ✅ Task 5.2: Code Quality Checks
+#### ✅ Task 5.2: Code Quality Checks and Import Cleanup
 **Priority**: HIGH  
-**Estimated Time**: 20 minutes
+**Estimated Time**: 30 minutes
 
+- [ ] Review and clean up relative imports
+- [ ] Run isort to organize imports
 - [ ] Run black formatter
-- [ ] Run isort for imports
 - [ ] Run ruff linter
 - [ ] Fix any issues found
 
-**Commands:**
+**Step 1: Review Import Patterns**
+
+Check for proper import usage:
+- Package imports in `__init__.py` should use relative imports (e.g., `from .module import func`)
+- Internal module imports should use relative imports
+- External dependencies should use absolute imports
+- Test files should use absolute imports from the package
+
+**Commands to review imports:**
 ```bash
+# Check for any problematic import patterns
+grep -r "^import mcp_commons" src/mcp_commons/
+grep -r "^from mcp_commons" src/mcp_commons/
+
+# Should return nothing - all internal imports should be relative
+```
+
+**Step 2: Sort and Clean Imports**
+```bash
+# Sort imports (this will organize them properly)
+isort src/ tests/
+
+# Show what would change (dry run first)
+isort --diff src/ tests/
+
 # Format code
 black src/ tests/
 
-# Sort imports
-isort src/ tests/
-
-# Lint
+# Lint and fix
 ruff check src/ tests/
-
-# Fix auto-fixable issues
 ruff check --fix src/ tests/
+```
+
+**Step 3: Verify Import Organization**
+```bash
+# After isort, imports should be organized as:
+# 1. Standard library imports
+# 2. Third-party imports (mcp, pydantic, etc.)
+# 3. Local relative imports (from . import ...)
+
+# Example of correct organization:
+# import logging  # stdlib
+# from typing import Any  # stdlib
+# 
+# from mcp.server.fastmcp import FastMCP  # third-party
+# 
+# from .base import UseCaseResult  # local relative
+```
+
+**Step 4: Document Import Standards**
+
+Create `.isort.cfg` if needed:
+```ini
+[settings]
+profile = black
+line_length = 88
+known_first_party = mcp_commons
+sections = FUTURE,STDLIB,THIRDPARTY,FIRSTPARTY,LOCALFOLDER
 ```
 
 ---

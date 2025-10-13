@@ -43,7 +43,7 @@ class TestMCPSDKv117Compatibility:
     async def test_in_memory_transport_available(self):
         """Verify that create_connected_server_and_client_session is available"""
         from mcp.shared.memory import create_connected_server_and_client_session
-        
+
         # Create a simple server
         server = FastMCP("test-server")
         
@@ -88,7 +88,7 @@ class TestBackwardCompatibility:
         
     def test_mcp_adapter_still_works(self):
         """Verify create_mcp_adapter works with v1.17.0"""
-        from mcp_commons import create_mcp_adapter, UseCaseResult
+        from mcp_commons import UseCaseResult, create_mcp_adapter
         
         async def sample_use_case() -> UseCaseResult:
             return UseCaseResult.success_with_data({"message": "test"})
