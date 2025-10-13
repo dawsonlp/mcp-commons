@@ -101,11 +101,20 @@ safe_tool = Tool.from_function(create_mcp_adapter(might_fail), name="safe_operat
 ## Requirements
 
 - Python 3.11+ (Python 3.13 recommended for optimal performance)
-- MCP SDK 1.15.0+
+- MCP SDK 1.17.0+ (updated from 1.15.0 - see [CHANGELOG.md](CHANGELOG.md))
 - Pydantic 2.11.9+
 - PyYAML 6.0.3+
 
-**Note**: This library has been updated with the latest dependency versions as of September 2025. All dependencies are compatible with Python 3.11-3.13.
+**Note**: This library has been updated to use MCP SDK v1.17.0, which includes tool removal capabilities and improved testing utilities. These features will be exposed in mcp-commons v1.2.0. See [ROADMAP.md](ROADMAP.md) for planned features.
+
+## What's New in v1.1.0
+
+- ✅ Compatible with MCP SDK v1.17.0
+- 🎯 Foundation for upcoming tool removal features (v1.2.0)
+- 📚 Comprehensive [roadmap](ROADMAP.md) for future development
+- 🔧 Enhanced testing infrastructure
+
+See [CHANGELOG.md](CHANGELOG.md) for full details.
 
 ## License
 
