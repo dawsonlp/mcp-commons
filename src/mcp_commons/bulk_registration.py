@@ -346,3 +346,251 @@ def register_tools(
         raise BulkRegistrationError(
             "Unable to determine tools_config format - missing 'function' or 'use_case' keys"
         )
+
+
+# ============================================================================
+# Tool Removal Features (Phase 2 - v1.2.0)
+# ============================================================================
+
+
+def get_registered_tools(srv: FastMCP) -> list[str]:
+    """
+    Get list of all registered tool names from a FastMCP server.
+
+    Args:
+        srv: FastMCP server instance
+
+    Returns:
+        List of registered tool names
+
+    Example:
+        >>> tools = get_registered_tools(srv)
+        >>> print(f"Server has {len(tools)} registered tools")
+    """
+    # Access internal _tool_manager to get tools synchronously
+    # FastMCP v1.17.0+ has _tool_manager with _tools dict
+    if hasattr(srv, "_tool_manager") and hasattr(srv._tool_manager, "_tools"):
+        return list(srv._tool_manager._tools.keys())
+    return []
+
+
+def tool_exists(srv: FastMCP, tool_name: str) -> bool:
+    """
+    Check if a tool is registered on the server.
+
+    Args:
+        srv: FastMCP server instance
+        tool_name: Name of tool to check
+
+    Returns:
+        True if tool exists, False otherwise
+
+    Example:
+        >>> if tool_exists(srv, "get_weather"):
+        ...     print("Weather tool is available")
+    """
+    return tool_name in get_registered_tools(srv)
+
+
+def count_tools(srv: FastMCP) -> int:
+    """
+    Count the number of registered tools on the server.
+
+    Args:
+        srv: FastMCP server instance
+
+    Returns:
+        Number of registered tools
+
+    Example:
+        >>> print(f"Server has {count_tools(srv)} tools")
+    """
+    return len(get_registered_tools(srv))
+
+
+def bulk_remove_tools(
+    srv: FastMCP, tool_names: list[str]
+) -> dict[str, Any]:
+    """
+    Remove multiple tools from a running MCP server.
+
+    Uses the FastMCP.remove_tool() method introduced in MCP SDK v1.17.0.
+    Provides detailed reporting of successful and failed removals.
+
+    Args:
+        srv: FastMCP server instance
+        tool_names: List of tool names to remove
+
+    Returns:
+        Dictionary containing:
+        - removed: List of successfully removed tool names
+        - failed: List of (tool_name, error_message) tuples
+        - success_rate: Float percentage (0.0-100.0)
+
+    Example:
+        >>> result = bulk_remove_tools(srv, ["tool1", "tool2", "tool3"])
+        >>> print(f"Removed {len(result['removed'])} tools")
+        >>> print(f"Success rate: {result['success_rate']:.1f}%")
+    """
+    logger.info(f"Starting bulk removal of {len(tool_names)} tools...")
+
+    removed = []
+    failed = []
+
+    for tool_name in tool_names:
+        try:
+            srv.remove_tool(tool_name)
+            removed.append(tool_name)
+            logger.debug(f"Successfully removed tool: {tool_name}")
+        except Exception as e:
+            error_msg = str(e)
+            failed.append((tool_name, error_msg))
+            logger.warning(f"Failed to remove tool '{tool_name}': {error_msg}")
+
+    total = len(tool_names)
+    success_rate = (len(removed) / total * 100) if total > 0 else 0.0
+
+    logger.info(
+        f"Bulk removal complete: {len(removed)}/{total} tools removed "
+        f"({success_rate:.1f}% success rate)"
+    )
+
+    return {
+        "removed": removed,
+        "failed": failed,
+        "success_rate": success_rate,
+    }
+
+
+def bulk_replace_tools(
+    srv: FastMCP,
+    tools_to_remove: list[str],
+    tools_to_add: dict[str, dict[str, Any]],
+) -> dict[str, Any]:
+    """
+    Atomically replace tools - remove old ones and add new ones.
+
+    This function performs a two-phase operation:
+    1. Remove specified tools
+    2. Add new tools using bulk_register_tools
+
+    If addition fails, the function reports the failure but does not
+    automatically rollback removals (as the original tool configurations
+    are not stored).
+
+    Args:
+        srv: FastMCP server instance
+        tools_to_remove: List of tool names to remove
+        tools_to_add: Dictionary of tools to add (same format as bulk_register_tools)
+
+    Returns:
+        Dictionary containing:
+        - removed: List of successfully removed tool names
+        - added: List of successfully added tool names
+        - removal_failed: List of (tool_name, error) tuples for failed removals
+        - addition_failed: Boolean indicating if addition phase failed
+        - errors: List of error messages if any
+
+    Example:
+        >>> result = bulk_replace_tools(
+        ...     srv,
+        ...     ["old_tool1", "old_tool2"],
+        ...     {"new_tool1": {"function": fn1, "description": "New tool 1"}}
+        ... )
+        >>> print(f"Replaced {len(result['removed'])} tools with {len(result['added'])}")
+    """
+    logger.info(
+        f"Starting bulk replacement: removing {len(tools_to_remove)} tools, "
+        f"adding {len(tools_to_add)} tools"
+    )
+
+    errors = []
+    added = []
+    addition_failed = False
+
+    # Phase 1: Remove old tools
+    removal_result = bulk_remove_tools(srv, tools_to_remove)
+    removed = removal_result["removed"]
+    removal_failed = removal_result["failed"]
+
+    if removal_failed:
+        errors.extend([f"Remove failed for '{name}': {err}" for name, err in removal_failed])
+
+    # Phase 2: Add new tools
+    try:
+        addition_result = bulk_register_tools(srv, tools_to_add)
+        added = [name for name, _ in addition_result]
+        logger.info(f"Successfully added {len(added)} new tools")
+    except BulkRegistrationError as e:
+        addition_failed = True
+        errors.append(f"Addition phase failed: {str(e)}")
+        logger.error(f"Addition phase failed: {str(e)}")
+
+    logger.info(
+        f"Bulk replacement complete: removed {len(removed)}, added {len(added)}, "
+        f"{len(errors)} errors"
+    )
+
+    return {
+        "removed": removed,
+        "added": added,
+        "removal_failed": removal_failed,
+        "addition_failed": addition_failed,
+        "errors": errors,
+    }
+
+
+def conditional_remove_tools(
+    srv: FastMCP, condition: Callable[[str], bool]
+) -> list[str]:
+    """
+    Remove tools matching a condition predicate.
+
+    This function retrieves all registered tools, applies the condition
+    function to each tool name, and removes tools where the condition
+    returns True.
+
+    Args:
+        srv: FastMCP server instance
+        condition: Callable that takes tool name and returns True to remove
+
+    Returns:
+        List of removed tool names
+
+    Example:
+        >>> # Remove all deprecated tools
+        >>> removed = conditional_remove_tools(
+        ...     srv,
+        ...     lambda name: "deprecated" in name.lower()
+        ... )
+        >>> print(f"Removed {len(removed)} deprecated tools")
+
+        >>> # Remove tools by prefix
+        >>> removed = conditional_remove_tools(
+        ...     srv,
+        ...     lambda name: name.startswith("test_")
+        ... )
+    """
+    logger.info("Starting conditional tool removal...")
+
+    # Get all registered tools
+    all_tools = get_registered_tools(srv)
+    logger.debug(f"Found {len(all_tools)} registered tools")
+
+    # Filter tools matching condition
+    tools_to_remove = [name for name in all_tools if condition(name)]
+    logger.info(f"Condition matched {len(tools_to_remove)} tools for removal")
+
+    if not tools_to_remove:
+        logger.info("No tools matched the removal condition")
+        return []
+
+    # Remove matching tools
+    result = bulk_remove_tools(srv, tools_to_remove)
+    removed = result["removed"]
+
+    if result["failed"]:
+        logger.warning(f"Failed to remove {len(result['failed'])} tools")
+
+    logger.info(f"Conditional removal complete: {len(removed)} tools removed")
+    return removed

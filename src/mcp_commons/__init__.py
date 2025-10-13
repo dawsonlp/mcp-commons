@@ -12,8 +12,14 @@ from .bulk_registration import (
     bulk_register_tools,
     bulk_register_tuple_format,
     bulk_register_with_adapter_pattern,
+    bulk_remove_tools,
+    bulk_replace_tools,
+    conditional_remove_tools,
+    count_tools,
+    get_registered_tools,
     log_registration_summary,
     register_tools,
+    tool_exists,
     validate_tools_config,
 )
 from .config import ConfigurationError, MCPConfig, create_config, load_dotenv_file
@@ -26,7 +32,7 @@ from .server import (
     setup_logging,
 )
 
-__version__ = "1.0.0"
+__version__ = "1.2.0"
 __all__ = [
     # Core adapter functionality
     "create_mcp_adapter",
@@ -43,6 +49,13 @@ __all__ = [
     "validate_tools_config",
     "register_tools",
     "BulkRegistrationError",
+    # Tool removal functionality (Phase 2 - v1.2.0)
+    "bulk_remove_tools",
+    "bulk_replace_tools",
+    "conditional_remove_tools",
+    "get_registered_tools",
+    "tool_exists",
+    "count_tools",
     # Server utilities
     "MCPServerBuilder",
     "setup_logging",

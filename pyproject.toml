@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "mcp-commons"
-version = "1.0.1"
+version = "1.2.0"
 description = "Shared infrastructure library for MCP (Model Context Protocol) servers"
 authors = [
     {name = "MCP Commons Contributors"}
@@ -25,7 +25,7 @@ classifiers = [
 dependencies = [
     "pydantic>=2.11.9",
     "PyYAML>=6.0.3",
-    "mcp>=1.15.0",
+    "mcp>=1.17.0",  # Updated for tool removal and testing utilities
 ]
 
 [project.optional-dependencies]
