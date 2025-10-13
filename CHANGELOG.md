@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [1.2.0-dev] - In Development
+## [1.2.0] - 2025-01-29
 
 ### Added
 - **Tool Removal Features** - Leveraging MCP SDK v1.17.0's `remove_tool()` capability
