@@ -9,7 +9,6 @@ import pytest
 from mcp.server.fastmcp import FastMCP
 
 from mcp_commons.bulk_registration import (
-    BulkRegistrationError,
     bulk_register_tools,
     bulk_remove_tools,
     bulk_replace_tools,
@@ -213,9 +212,7 @@ def test_bulk_replace_tools_success(mcp_server, sample_tools):
     new_tools = {
         "new_tool1": {"function": sample_tools["tool3"], "description": "New Tool 1"},
     }
-    result = bulk_replace_tools(
-        mcp_server, ["old_tool1", "old_tool2"], new_tools
-    )
+    result = bulk_replace_tools(mcp_server, ["old_tool1", "old_tool2"], new_tools)
 
     # Verify result structure
     assert "removed" in result
@@ -249,9 +246,7 @@ def test_bulk_replace_tools_removal_failure(mcp_server, sample_tools):
     new_tools = {
         "new_tool1": {"function": sample_tools["tool2"], "description": "New Tool 1"}
     }
-    result = bulk_replace_tools(
-        mcp_server, ["old_tool1", "nonexistent"], new_tools
-    )
+    result = bulk_replace_tools(mcp_server, ["old_tool1", "nonexistent"], new_tools)
 
     # Should have partial removal, successful addition
     assert len(result["removed"]) == 1
@@ -384,15 +379,16 @@ def test_conditional_remove_tools_complex_condition(mcp_server, sample_tools):
     # Register tools
     tools_config = {
         "api_v1_get": {"function": sample_tools["tool1"], "description": "API v1 Get"},
-        "api_v1_post": {"function": sample_tools["tool2"], "description": "API v1 Post"},
+        "api_v1_post": {
+            "function": sample_tools["tool2"],
+            "description": "API v1 Post",
+        },
         "api_v2_get": {"function": sample_tools["tool3"], "description": "API v2 Get"},
     }
     bulk_register_tools(mcp_server, tools_config)
 
     # Remove v1 API tools only
-    removed = conditional_remove_tools(
-        mcp_server, lambda name: "api_v1" in name
-    )
+    removed = conditional_remove_tools(mcp_server, lambda name: "api_v1" in name)
 
     # Verify removal
     assert len(removed) == 2

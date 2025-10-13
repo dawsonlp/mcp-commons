@@ -408,9 +408,7 @@ def count_tools(srv: FastMCP) -> int:
     return len(get_registered_tools(srv))
 
 
-def bulk_remove_tools(
-    srv: FastMCP, tool_names: list[str]
-) -> dict[str, Any]:
+def bulk_remove_tools(srv: FastMCP, tool_names: list[str]) -> dict[str, Any]:
     """
     Remove multiple tools from a running MCP server.
 
@@ -514,7 +512,9 @@ def bulk_replace_tools(
     removal_failed = removal_result["failed"]
 
     if removal_failed:
-        errors.extend([f"Remove failed for '{name}': {err}" for name, err in removal_failed])
+        errors.extend(
+            [f"Remove failed for '{name}': {err}" for name, err in removal_failed]
+        )
 
     # Phase 2: Add new tools
     try:
