@@ -8,12 +8,17 @@
 
 ## Overview
 
-MCP Commons eliminates repetitive patterns when building MCP servers by providing:
-- **Adapter Pattern** - Convert business logic to MCP tools automatically
-- **Bulk Operations** - Register and manage multiple tools efficiently  
-- **Tool Lifecycle** - Add, remove, and replace tools dynamically (v1.2.0+)
-- **Type Safety** - Preserve function signatures and type hints
-- **Error Handling** - Consistent error responses across all tools
+MCP Commons provides architectural patterns for building maintainable MCP servers:
+
+**Primary Value (90%)**:
+- **Adapter Pattern** - Decouple business logic from MCP protocol for multi-interface reuse
+- **UseCaseResult** - Consistent error handling pattern across all operations
+
+**Convenience Features (10%)**:
+- **Bulk Operations** - Config-driven tool registration with error reporting
+- **Tool Lifecycle** - Batch operations over FastMCP's add_tool() and remove_tool()
+
+**Built on FastMCP**: mcp-commons is a thin wrapper over FastMCP's existing methods. It doesn't replace FastMCP's capabilities - it provides architectural patterns and convenience wrappers to make your code more maintainable.
 
 **Current Version**: 1.2.1 | [What's New](#whats-new-in-v121) | [Changelog](CHANGELOG.md)
 
@@ -131,6 +136,22 @@ git clone https://github.com/dawsonlp/mcp-commons.git
 cd mcp-commons
 pip install -e ".[dev]"
 ```
+
+---
+
+## What FastMCP Provides vs What mcp-commons Adds
+
+| Feature | FastMCP (SDK) | mcp-commons |
+|---------|---------------|-------------|
+| **Tool registration** | `server.add_tool(func, name, desc)` | Config-driven bulk wrapper |
+| **Tool removal** | `server.remove_tool(name)` (v1.17.0+) | Batch wrapper with reporting |
+| **Decorators** | `@server.tool()` decorator | ❌ We don't use decorators |
+| **Adapter pattern** | ❌ Not provided | ✅ Core feature - decouples logic |
+| **UseCaseResult** | ❌ Not provided | ✅ Consistent error handling |
+| **Error reporting** | Exceptions on failure | Success/failure batch reports |
+| **Tool managers** | ToolManager, ResourceManager, etc. | ✅ We use FastMCP's managers |
+
+**Key Point**: mcp-commons doesn't replace FastMCP - it builds on it. We use FastMCP's `add_tool()` and `remove_tool()` methods internally, adding convenience wrappers and architectural patterns on top.
 
 ---
 
@@ -273,7 +294,21 @@ UseCaseResult.failure("Invalid input parameters")
 
 ### Bulk Registration
 
-Register multiple related tools with shared configuration:
+Convenience wrappers over FastMCP's `add_tool()` method for config-driven registration:
+
+**What it actually does**:
+```python
+# mcp-commons bulk_register_tools() is essentially:
+for tool_name, config in tools_config.items():
+    server.add_tool(  # ← FastMCP's existing method
+        config["function"],
+        name=tool_name,
+        description=config["description"]
+    )
+# Plus: error handling, logging, and success/failure reporting
+```
+
+**Why use it**: Config-driven API + batch error handling instead of manual loops.
 
 #### Configuration Dictionary
 
@@ -324,7 +359,21 @@ bulk_register_with_adapter_pattern(
 
 ### Tool Management (v1.2.0)
 
-New in version 1.2.0: Dynamic tool lifecycle management.
+New in version 1.2.0: Convenience wrappers for batch tool operations.
+
+**What it actually does**: Loops over FastMCP's `remove_tool()` method (added in SDK v1.17.0) with error reporting:
+```python
+# mcp-commons bulk_remove_tools() is essentially:
+for tool_name in tool_names:
+    try:
+        server.remove_tool(tool_name)  # ← FastMCP's method (v1.17.0+)
+        removed.append(tool_name)
+    except Exception as e:
+        failed.append((tool_name, str(e)))
+# Returns: {"removed": [...], "failed": [...], "success_rate": 66.7}
+```
+
+**Why use it**: Batch operations + detailed success/failure reporting instead of manual loops.
 
 #### Remove Tools
 

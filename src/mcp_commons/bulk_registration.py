@@ -1,9 +1,24 @@
 """
-Generic Bulk Registration System for MCP Servers
+Bulk Registration Utilities for MCP Servers
 
-This module provides generic bulk registration of MCP tools from function configuration.
-Eliminates the need for @srv.tool() decorators and keeps business logic clean.
-Consolidates duplicate bulk registration patterns across multiple MCP servers.
+Convenience wrappers over FastMCP's add_tool() and remove_tool() methods for 
+config-driven tool management with batch error handling.
+
+What this module provides:
+- Config-driven registration as alternative to manual loops of add_tool() calls
+- Batch error handling with success/failure reporting
+- Convenient lifecycle operations (bulk remove, replace, conditional removal)
+
+What it doesn't provide:
+- This is not a replacement for FastMCP - it uses FastMCP's methods internally
+- This is not a different tool registry - it calls FastMCP's existing registry
+- This is not eliminating decorators - it provides an alternative pattern
+
+Core implementation:
+    bulk_register_tools() essentially does:
+    for tool_name, config in tools_config.items():
+        server.add_tool(config["function"], name=tool_name, description=...)
+    Plus error handling, logging, and reporting.
 """
 
 import logging

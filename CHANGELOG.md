@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.2] - 2025-01-15
+
+### Changed
+- **Documentation Accuracy** - Updated all documentation to accurately represent mcp-commons' relationship with FastMCP
+  - Clarified that mcp-commons is a thin wrapper over FastMCP's existing methods (add_tool, remove_tool)
+  - Updated README to show actual code implementations (what bulk operations really do)
+  - Emphasized adapter pattern as the primary value (90%) vs convenience wrappers (10%)
+  - Added comparison table showing FastMCP capabilities vs mcp-commons additions
+  - Updated bulk_registration.py module docstring for transparency
+
+### Fixed
+- None - documentation accuracy improvements only
+
+### Notes
+- No code changes - this is purely a documentation release
+- All functionality from v1.2.1 remains unchanged
+- Users upgrading from v1.2.1 will see no breaking changes
+
 ## [1.2.1] - 2025-01-29
 
 ### Changed
