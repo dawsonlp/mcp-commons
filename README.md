@@ -15,7 +15,7 @@ MCP Commons eliminates repetitive patterns when building MCP servers by providin
 - **Type Safety** - Preserve function signatures and type hints
 - **Error Handling** - Consistent error responses across all tools
 
-**Current Version**: 1.2.0 | [What's New](#whats-new-in-v120) | [Changelog](CHANGELOG.md)
+**Current Version**: 1.2.1 | [What's New](#whats-new-in-v121) | [Changelog](CHANGELOG.md)
 
 ---
 
@@ -437,6 +437,19 @@ Atomically replaces tools for hot-reloading.
 ---
 
 For complete API documentation, see [API Reference](https://github.com/dawsonlp/mcp-commons/wiki/API-Reference).
+
+---
+
+## What's New in v1.2.1
+
+### Documentation Improvements
+- ✅ Professional-grade README with comprehensive examples
+- ✅ Complete CONTRIBUTING.md guide for contributors  
+- ✅ Enhanced API reference documentation
+- ✅ Version badges and professional formatting
+- ✅ Clear information hierarchy and navigation
+
+This is a documentation-only release. All v1.2.0 features remain unchanged.
 
 ---
 

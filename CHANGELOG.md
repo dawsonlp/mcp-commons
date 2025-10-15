@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.1] - 2025-01-29
+
+### Changed
+- **Documentation Overhaul** - Professional-grade documentation following technical writing best practices
+  - Comprehensive README.md with 15+ code examples, clear hierarchy, and progressive disclosure
+  - New CONTRIBUTING.md with complete contributor guidelines and development workflow
+  - Enhanced API reference with detailed function documentation
+  - Added version badges and professional formatting throughout
+
+### Fixed
+- None - documentation-only release
+
 ## [1.2.0] - 2025-01-29
 
 ### Added
