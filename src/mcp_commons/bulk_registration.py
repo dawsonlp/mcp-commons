@@ -1,7 +1,7 @@
 """
 Bulk Registration Utilities for MCP Servers
 
-Convenience wrappers over FastMCP's add_tool() and remove_tool() methods for 
+Convenience wrappers over FastMCP's add_tool() and remove_tool() methods for
 config-driven tool management with batch error handling.
 
 What this module provides:
