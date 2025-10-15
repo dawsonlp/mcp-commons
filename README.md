@@ -19,6 +19,82 @@ MCP Commons eliminates repetitive patterns when building MCP servers by providin
 
 ---
 
+## Why mcp-commons Exists
+
+### The Problem with Decorators
+
+The MCP SDK uses decorators (`@server.tool()`) to register functions as tools. While the goal of making function exposure easy was admirable, **decorators were the wrong mechanism** for this purpose.
+
+**Decorators should add cross-cutting concerns** (caching, authentication, logging) that apply regardless of how a function is used. They should not specify usage contexts (MCP vs REST vs CLI).
+
+```python
+# ❌ PROBLEM: Function is now ONLY usable in MCP context
+from mcp.server.fastmcp import FastMCP
+
+server = FastMCP("my-server")
+
+@server.tool()
+async def search_documents(query: str) -> dict:
+    """This function is tied to MCP - can't reuse for REST, CLI, or testing."""
+    results = await document_service.search(query)
+    return {"results": results}
+
+# Can't use this function in:
+# - REST API endpoints
+# - CLI commands  
+# - GraphQL resolvers
+# - Unit tests (without MCP context)
+```
+
+### The Solution: Adapter Pattern
+
+**Adapter/wrapper functions** provide the same ease of use while maintaining proper separation of concerns. Your business logic stays pure and framework-agnostic, while thin adapters handle protocol translation.
+
+```python
+# ✅ SOLUTION: Pure business logic, reusable everywhere
+async def search_documents(query: str) -> List[Document]:
+    """Pure function - no MCP coupling, works anywhere."""
+    return await document_service.search(query)
+
+# MCP adapter - thin wrapper for protocol translation
+@server.tool()
+async def mcp_search(query: str) -> dict:
+    results = await search_documents(query)
+    return {"results": [doc.to_dict() for doc in results]}
+
+# REST API - reuses same logic
+@app.get("/api/search")
+async def api_search(query: str):
+    results = await search_documents(query)
+    return {"results": [doc.to_dict() for doc in results]}
+
+# CLI - reuses same logic
+@cli.command()
+def cli_search(query: str):
+    results = asyncio.run(search_documents(query))
+    for doc in results:
+        print(f"- {doc.title}")
+
+# Testing - pure function, no framework needed
+async def test_search():
+    results = await search_documents("test query")
+    assert len(results) > 0
+```
+
+### Architectural Benefits
+
+This adapter pattern enables:
+
+1. **DRY Principle** - One business function, multiple interfaces
+2. **Separation of Concerns** - Business logic independent of transport
+3. **Framework Independence** - No coupling to MCP SDK, FastAPI, Click, etc.
+4. **Easy Testing** - Test pure functions without framework context
+5. **Future-Proof** - When MCP SDK v2.0 changes, only adapters need updates
+
+**mcp-commons exists because the MCP SDK got this fundamental design decision wrong.** The adapter pattern isn't "nice to have" - it's essential for proper architecture in any non-trivial application.
+
+---
+
 ## Table of Contents
 
 - [Installation](#installation)
