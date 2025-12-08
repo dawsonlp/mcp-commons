@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.1] - 2025-12-07
+
+### Changed
+- Updated dependencies to latest versions:
+  - **mcp**: 1.21.1 → 1.23.1 (MCP SDK with latest features and improvements)
+  - **pydantic**: 2.11.9 → 2.12.5 (data validation improvements)
+  - **pytest**: 8.4.2 → 9.0.2 (testing framework updates)
+  - **pytest-asyncio**: 1.2.0 → 1.3.0 (async testing improvements)
+  - **black**: 25.9.0 → 25.12.0 (code formatter updates)
+  - **isort**: 6.0.1 → 7.0.0 (import sorting improvements)
+  - **ruff**: 0.13.2 → 0.14.8 (linter updates)
+  - PyYAML and pytest-cov remain at current versions (already latest)
+
+### Migration Notes
+- **No breaking changes** - This is a dependency update only
+- To upgrade: `pip install --upgrade mcp-commons>=1.3.1`
+- All existing code continues to work without modifications
+- All 42 tests pass with updated dependencies
+
 ## [1.3.0] - 2025-01-13
 
 ### Changed
