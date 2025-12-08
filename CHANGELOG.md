@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.2] - 2025-12-08
+
+### Changed
+- Updated MCP SDK dependency from 1.23.1 to 1.23.2
+  - Latest patch release with bug fixes and improvements
+
+### Migration Notes
+- **No breaking changes** - This is a dependency update only
+- To upgrade: `pip install --upgrade mcp-commons>=1.3.2`
+- All existing code continues to work without modifications
+- All 42 tests pass with updated dependency
+
 ## [1.3.1] - 2025-12-07
 
 ### Changed
