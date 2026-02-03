@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.3] - 2026-02-02
+
+### Changed
+- Updated MCP SDK dependency from 1.23.2 to 1.26.0
+  - Latest stable release from 2026-01-24
+  - Includes latest features and improvements from MCP SDK
+- Updated GitHub Actions workflow to trigger releases on version tags
+  - Releases now triggered by pushing `v*` tags (e.g., `git push origin v1.3.3`)
+  - Previously triggered on every push to main branch
+  - Provides better control over release timing
+
+### Migration Notes
+- **No breaking changes** - This is a dependency update and CI/CD improvement
+- To upgrade: `pip install --upgrade mcp-commons>=1.3.3`
+- All existing code continues to work without modifications
+
+### Release Process
+To release a new version:
+1. Update version in `pyproject.toml`
+2. Update `CHANGELOG.md`
+3. Commit changes: `git commit -m "chore: bump version to X.Y.Z"`
+4. Tag the release: `git tag -a vX.Y.Z -m "Version X.Y.Z"`
+5. Push: `git push origin main && git push origin vX.Y.Z`
+
 ## [1.3.2] - 2025-12-08
 
 ### Changed
