@@ -20,7 +20,7 @@ MCP Commons provides architectural patterns for building maintainable MCP server
 
 **Built on FastMCP**: mcp-commons is a thin wrapper over FastMCP's existing methods. It doesn't replace FastMCP's capabilities - it provides architectural patterns and convenience wrappers to make your code more maintainable.
 
-**Current Version**: 1.2.1 | [What's New](#whats-new-in-v121) | [Changelog](CHANGELOG.md)
+**Current Version**: 1.3.4 | [What's New](#whats-new-in-v134) | [Changelog](CHANGELOG.md)
 
 ---
 
@@ -120,8 +120,8 @@ This adapter pattern enables:
 ### Requirements
 
 - **Python**: 3.11+ (3.13 recommended)
-- **MCP SDK**: 1.17.0+
-- **Dependencies**: Pydantic 2.11.9+, PyYAML 6.0.3+
+- **MCP SDK**: 1.26.0+
+- **Dependencies**: Pydantic 2.12.5+, PyYAML 6.0.3+
 
 ### Install from PyPI
 
@@ -565,48 +565,20 @@ For complete API documentation, see [API Reference](https://github.com/dawsonlp/
 
 ---
 
-## What's New in v1.2.1
+## What's New in v1.3.4
 
-### Documentation Improvements
-- ✅ Professional-grade README with comprehensive examples
-- ✅ Complete CONTRIBUTING.md guide for contributors  
-- ✅ Enhanced API reference documentation
-- ✅ Version badges and professional formatting
-- ✅ Clear information hierarchy and navigation
+### Documentation Corrections
+- ✅ Fixed `__version__` in `__init__.py` (was stuck at 1.2.2)
+- ✅ Updated README.md with correct version references and dependency versions
+- ✅ Updated CHANGELOG.md reference links
+- ✅ All version references now consistent across codebase
 
-This is a documentation-only release. All v1.2.0 features remain unchanged.
-
----
-
-## What's New in v1.2.0
-
-### Tool Lifecycle Management
-- ✅ `bulk_remove_tools()` - Remove multiple tools with reporting
-- ✅ `bulk_replace_tools()` - Atomic tool replacement for hot-reload
-- ✅ `conditional_remove_tools()` - Pattern-based tool removal
-- ✅ `get_registered_tools()`, `tool_exists()`, `count_tools()` - Tool inspection utilities
-
-### Quality Improvements
-- ✅ All 42 tests passing (19 new tests for tool removal)
-- ✅ Enhanced testing with MCP SDK v1.17.0 features
-- ✅ Comprehensive documentation and examples
-
-### Breaking Changes
-None - all features are additive and backward compatible.
+### Previous Highlights
+- **v1.3.x**: Configuration management, error hierarchy, server builder
+- **v1.2.x**: Tool lifecycle management (remove, replace, inspect tools)
+- **v1.1.x**: Bulk registration, adapter pattern foundations
 
 See [CHANGELOG.md](CHANGELOG.md) for complete version history.
-
----
-
-## Roadmap
-
-Future development is planned across multiple phases:
-
-- **Phase 3 (v1.3.0)**: Enhanced error handling and observability
-- **Phase 4 (v1.4.0)**: Performance optimization and caching
-- **Phase 5 (v1.5.0)**: Advanced features and integrations
-
-See [ROADMAP.md](ROADMAP.md) for detailed plans.
 
 ---
 

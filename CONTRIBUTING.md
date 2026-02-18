@@ -206,11 +206,9 @@ Follow these principles:
 
 ```
 tests/
-├── test_adapters.py          # Adapter pattern tests
-├── test_bulk_registration.py  # Bulk operations tests
-├── test_tool_removal.py       # Tool removal tests (v1.2.0)
-├── test_mcp_sdk_compatibility.py  # SDK compatibility tests
-└── fixtures/                  # Shared test fixtures
+├── test_adapters.py               # Adapter pattern tests
+├── test_tool_removal.py           # Tool removal and lifecycle tests
+└── test_mcp_sdk_compatibility.py  # SDK compatibility tests
 ```
 
 ### Writing Tests
@@ -392,8 +390,8 @@ Follow Semantic Versioning (SemVer):
 2. Update CHANGELOG.md with release date
 3. Run full test suite
 4. Create release branch
-5. Tag release: `git tag -a v1.2.0 -m "Release v1.2.0"`
-6. Push tag: `git push origin v1.2.0`
+5. Tag release: `git tag -a vX.Y.Z -m "Release vX.Y.Z"`
+6. Push tag: `git push origin vX.Y.Z`
 7. GitHub Actions automatically deploys to PyPI
 8. Create GitHub release with notes
 

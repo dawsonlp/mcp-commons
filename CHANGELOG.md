@@ -7,6 +7,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.4] - 2026-02-18
+
+### Fixed
+- **`__version__` in `__init__.py`** was stuck at `1.2.2` — now correctly set to `1.3.4`
+- **README.md** had outdated version references:
+  - "Current Version: 1.2.1" → updated to 1.3.4
+  - "MCP SDK: 1.17.0+" → updated to 1.26.0+
+  - "Pydantic 2.11.9+" → updated to 2.12.5+
+  - Removed stale "What's New" sections for v1.2.0 and v1.2.1
+  - Removed outdated roadmap section referencing future v1.3.0–v1.5.0
+- **CHANGELOG.md** reference links only covered up to v1.1.0 — now covers all versions
+- **CONTRIBUTING.md** — fixed test structure listing, updated release tag examples
+
+### Removed
+- **8 obsolete planning/historical documents** that contained heavily outdated version references:
+  - `PHASE1_IMPLEMENTATION.md` — v1.1.0 implementation plan (completed)
+  - `PHASE2_IMPLEMENTATION.md` — v1.2.0 implementation plan (completed)
+  - `ARCHITECTURAL_EVALUATION.md` — v1.2.1 evaluation against SDK v1.17.0 (superseded)
+  - `ARCHITECTURAL_EVALUATION_REVISED.md` — revision of the above (superseded)
+  - `v1.17.0-changes.md` — MCP SDK v1.17.0 release notes (no longer relevant)
+  - `DEVELOPMENT_CHECKLIST.md` — v1.1.0 checklist (completed)
+  - `ROADMAP.md` — listed current version as 1.0.1 (entirely stale)
+  - `IMPORT_STANDARDS.md` — import conventions (captured in CONTRIBUTING.md)
+
+### Migration Notes
+- **No breaking changes** — documentation-only fixes and cleanup
+- To upgrade: `pip install --upgrade mcp-commons>=1.3.4`
+
 ## [1.3.3] - 2026-02-02
 
 ### Changed
@@ -225,6 +253,16 @@ removed = conditional_remove_tools(srv, lambda name: name.startswith("test_"))
 - MCPServerBuilder for standardized server setup
 - Core functionality for eliminating MCP server boilerplate
 
-[Unreleased]: https://github.com/dawsonlp/mcp-commons/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/dawsonlp/mcp-commons/compare/v1.3.4...HEAD
+[1.3.4]: https://github.com/dawsonlp/mcp-commons/compare/v1.3.3...v1.3.4
+[1.3.3]: https://github.com/dawsonlp/mcp-commons/compare/v1.3.2...v1.3.3
+[1.3.2]: https://github.com/dawsonlp/mcp-commons/compare/v1.3.1...v1.3.2
+[1.3.1]: https://github.com/dawsonlp/mcp-commons/compare/v1.3.0...v1.3.1
+[1.3.0]: https://github.com/dawsonlp/mcp-commons/compare/v1.2.4...v1.3.0
+[1.2.4]: https://github.com/dawsonlp/mcp-commons/compare/v1.2.3...v1.2.4
+[1.2.3]: https://github.com/dawsonlp/mcp-commons/compare/v1.2.2...v1.2.3
+[1.2.2]: https://github.com/dawsonlp/mcp-commons/compare/v1.2.1...v1.2.2
+[1.2.1]: https://github.com/dawsonlp/mcp-commons/compare/v1.2.0...v1.2.1
+[1.2.0]: https://github.com/dawsonlp/mcp-commons/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/dawsonlp/mcp-commons/compare/v1.0.1...v1.1.0
 [1.0.1]: https://github.com/dawsonlp/mcp-commons/releases/tag/v1.0.1
