@@ -6,7 +6,7 @@ eliminating boilerplate and ensuring consistency across server implementations.
 """
 
 from .adapters import AdapterStats, create_mcp_adapter, validate_use_case_result
-from .base import BaseUseCase, UseCaseResult
+from .base import BaseUseCase, UseCaseFactory, UseCaseResult
 from .bulk_registration import (
     BulkRegistrationError,
     bulk_register_tools,
@@ -23,7 +23,6 @@ from .bulk_registration import (
     validate_tools_config,
 )
 from .config import ConfigurationError, MCPConfig, create_config, load_dotenv_file
-from .exceptions import AdapterError, McpCommonsError, UseCaseError
 from .server import (
     MCPServerBuilder,
     create_mcp_app,
@@ -32,7 +31,7 @@ from .server import (
     setup_logging,
 )
 
-__version__ = "1.3.4"
+__version__ = "2.0.0"
 __all__ = [
     # Core adapter functionality
     "create_mcp_adapter",
@@ -41,6 +40,7 @@ __all__ = [
     # Base classes
     "UseCaseResult",
     "BaseUseCase",
+    "UseCaseFactory",
     # Bulk registration functionality
     "bulk_register_tools",
     "bulk_register_with_adapter_pattern",
@@ -49,7 +49,7 @@ __all__ = [
     "validate_tools_config",
     "register_tools",
     "BulkRegistrationError",
-    # Tool removal functionality (Phase 2 - v1.2.0)
+    # Tool removal functionality
     "bulk_remove_tools",
     "bulk_replace_tools",
     "conditional_remove_tools",
@@ -67,8 +67,4 @@ __all__ = [
     "ConfigurationError",
     "create_config",
     "load_dotenv_file",
-    # Exceptions
-    "McpCommonsError",
-    "UseCaseError",
-    "AdapterError",
 ]

@@ -27,16 +27,6 @@ class UseCaseResult(Generic[T]):
     details: dict[str, Any] | None = None
 
     @classmethod
-    def success_with_data(cls, data: T, **details) -> "UseCaseResult[T]":
-        """Create a successful result with data."""
-        return cls(success=True, data=data, details=details if details else None)
-
-    @classmethod
-    def failure_with_error(cls, error: str, **details) -> "UseCaseResult[T]":
-        """Create a failed result with error message."""
-        return cls(success=False, error=error, details=details if details else None)
-
-    @classmethod
     def success(cls, data: T | None = None, **details) -> "UseCaseResult[T]":
         """Create a successful result, optionally with data."""
         return cls(success=True, data=data, details=details if details else None)
@@ -45,22 +35,6 @@ class UseCaseResult(Generic[T]):
     def failure(cls, error: str, **details) -> "UseCaseResult[T]":
         """Create a failed result with error message."""
         return cls(success=False, error=error, details=details if details else None)
-
-    def get_data(self) -> T | None:
-        """Get the result data."""
-        return self.data
-
-    def has_data(self) -> bool:
-        """Check if result contains data."""
-        return self.data is not None
-
-    def is_success(self) -> bool:
-        """Check if the result represents success."""
-        return self.success
-
-    def is_failure(self) -> bool:
-        """Check if the result represents failure."""
-        return not self.success
 
 
 class BaseUseCase:
@@ -111,44 +85,6 @@ class BaseUseCase:
         self._log_error(operation, error, **context)
 
         return UseCaseResult.failure(error=str(error), operation=operation, **context)
-
-
-class QueryUseCase(BaseUseCase):
-    """Base class for query (read) operations."""
-
-    async def execute_query(
-        self, operation: str, query_func, **context
-    ) -> UseCaseResult[Any]:
-        """Execute a query operation with standardized error handling."""
-        try:
-            result = await query_func()
-            self._log_success(operation, **context)
-
-            return UseCaseResult.success_with_data(
-                data=result, operation=operation, **context
-            )
-
-        except Exception as e:
-            return self._handle_exception(e, operation, **context)
-
-
-class CommandUseCase(BaseUseCase):
-    """Base class for command (write) operations."""
-
-    async def execute_command(
-        self, operation: str, command_func, **context
-    ) -> UseCaseResult[Any]:
-        """Execute a command operation with standardized error handling."""
-        try:
-            result = await command_func()
-            self._log_success(operation, **context)
-
-            return UseCaseResult.success_with_data(
-                data=result, operation=operation, **context
-            )
-
-        except Exception as e:
-            return self._handle_exception(e, operation, **context)
 
 
 class UseCaseFactory:

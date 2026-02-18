@@ -30,7 +30,7 @@ class TestCreateMcpAdapter:
 
         # Mock use case that returns success
         async def mock_use_case(param1: str, param2: int) -> UseCaseResult[dict]:
-            return UseCaseResult.success_with_data({"result": f"{param1}:{param2}"})
+            return UseCaseResult.success({"result": f"{param1}:{param2}"})
 
         # Create adapter
         adapted = create_mcp_adapter(mock_use_case)
@@ -101,7 +101,7 @@ class TestCreateMcpAdapter:
 
         # Mock use case
         async def mock_use_case() -> UseCaseResult[dict]:
-            return UseCaseResult.success_with_data({"data": "test"})
+            return UseCaseResult.success({"data": "test"})
 
         # Custom success handler
         def custom_handler(data: Any) -> dict[str, Any]:
@@ -190,7 +190,7 @@ class TestSpecializedAdapters:
         """Test query-optimized adapter."""
 
         async def mock_query() -> UseCaseResult[list]:
-            return UseCaseResult.success_with_data([1, 2, 3])
+            return UseCaseResult.success([1, 2, 3])
 
         adapted = create_query_adapter(mock_query)
         result = await adapted()
@@ -202,7 +202,7 @@ class TestSpecializedAdapters:
         """Test command-optimized adapter."""
 
         async def mock_command() -> UseCaseResult[str]:
-            return UseCaseResult.success_with_data("created")
+            return UseCaseResult.success("created")
 
         adapted = create_command_adapter(mock_command)
         result = await adapted()
@@ -231,7 +231,7 @@ class TestMockAdapter:
     @pytest.mark.asyncio
     async def test_mock_with_use_case_result(self):
         """Test mock adapter with UseCaseResult."""
-        mock_result = UseCaseResult.success_with_data({"test": "data"})
+        mock_result = UseCaseResult.success({"test": "data"})
         adapted = create_mock_adapter(mock_result)
 
         result = await adapted(param="ignored")
@@ -272,7 +272,7 @@ async def test_integration_with_real_use_case_pattern():
         async def execute(self, instance_name: str) -> UseCaseResult[list[dict]]:
             try:
                 projects = await self._project_service.get_projects(instance_name)
-                return UseCaseResult.success_with_data(projects)
+                return UseCaseResult.success(projects)
             except Exception as e:
                 return UseCaseResult.failure(f"Failed to fetch projects: {str(e)}")
 

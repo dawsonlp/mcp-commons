@@ -7,6 +7,44 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.0] - 2026-02-18
+
+### Removed (BREAKING)
+- **`exceptions.py` module deleted** — All exception classes had zero client usage:
+  - `McpCommonsError`, `UseCaseError`, `AdapterError`, `ValidationError`, `ConfigurationError`, `DependencyError`
+  - `config.py`'s `ConfigurationError` is now a standalone `Exception` subclass (same name, same behavior)
+- **Duplicate `UseCaseResult` methods removed** — Clients construct directly via `UseCaseResult(success=True, ...)`
+  - `success_with_data()` — use `UseCaseResult.success(data=...)` instead
+  - `failure_with_error()` — use `UseCaseResult.failure(error=...)` instead
+- **Trivial accessor methods removed** from `UseCaseResult`:
+  - `get_data()` — use `.data` directly
+  - `has_data()` — use `result.data is not None`
+  - `is_success()` — use `result.success`
+  - `is_failure()` — use `not result.success`
+- **Unused base classes removed** — jira-helper defines its own locally:
+  - `QueryUseCase` class
+  - `CommandUseCase` class
+- **Dead `MCPServerBuilder` methods removed**:
+  - `with_config()` — was a no-op (stored but never read by `build()`)
+  - `with_debug()` — never called externally
+  - `with_log_level()` — never called externally
+
+### Added
+- `UseCaseFactory` now exported from `__init__.py` (was defined but not exported)
+
+### Changed
+- `ConfigurationError` now inherits from `Exception` directly (was `McpCommonsError`)
+- Total statements reduced from 578 → 484 (16% less code)
+- Coverage improved from 49% → 52% without adding tests
+
+### Migration Notes
+- **If you used `success_with_data(data)`**: Replace with `UseCaseResult.success(data=data)`
+- **If you used `failure_with_error(msg)`**: Replace with `UseCaseResult.failure(error=msg)`
+- **If you imported `McpCommonsError`, `UseCaseError`, or `AdapterError`**: Remove the import; these were unused
+- **If you used `.is_success()`**: Replace with `.success`
+- **If you used `.get_data()`**: Replace with `.data`
+- All downstream BaseMcpServer projects verified: zero impact
+
 ## [1.3.4] - 2026-02-18
 
 ### Fixed
@@ -253,7 +291,8 @@ removed = conditional_remove_tools(srv, lambda name: name.startswith("test_"))
 - MCPServerBuilder for standardized server setup
 - Core functionality for eliminating MCP server boilerplate
 
-[Unreleased]: https://github.com/dawsonlp/mcp-commons/compare/v1.3.4...HEAD
+[Unreleased]: https://github.com/dawsonlp/mcp-commons/compare/v2.0.0...HEAD
+[2.0.0]: https://github.com/dawsonlp/mcp-commons/compare/v1.3.4...v2.0.0
 [1.3.4]: https://github.com/dawsonlp/mcp-commons/compare/v1.3.3...v1.3.4
 [1.3.3]: https://github.com/dawsonlp/mcp-commons/compare/v1.3.2...v1.3.3
 [1.3.2]: https://github.com/dawsonlp/mcp-commons/compare/v1.3.1...v1.3.2

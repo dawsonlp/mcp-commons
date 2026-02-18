@@ -12,12 +12,10 @@ from typing import Any
 
 import yaml
 
-from .exceptions import McpCommonsError
-
 logger = logging.getLogger(__name__)
 
 
-class ConfigurationError(McpCommonsError):
+class ConfigurationError(Exception):
     """Raised when there are configuration-related errors."""
 
     pass

@@ -34,9 +34,6 @@ class MCPServerBuilder:
         self.server_name = server_name
         self.server_instance: FastMCP | None = None
         self.tools_config: dict[str, dict[str, Any]] = {}
-        self.config = {}
-        self.debug = True
-        self.log_level = "INFO"
 
     def with_tools_config(
         self, tools_config: dict[str, dict[str, Any]]
@@ -51,45 +48,6 @@ class MCPServerBuilder:
             Self for method chaining
         """
         self.tools_config = tools_config
-        return self
-
-    def with_config(self, config: dict[str, Any]) -> "MCPServerBuilder":
-        """
-        Set server configuration.
-
-        Args:
-            config: Configuration dictionary
-
-        Returns:
-            Self for method chaining
-        """
-        self.config = config
-        return self
-
-    def with_debug(self, debug: bool = True) -> "MCPServerBuilder":
-        """
-        Enable or disable debug mode.
-
-        Args:
-            debug: Whether to enable debug mode
-
-        Returns:
-            Self for method chaining
-        """
-        self.debug = debug
-        return self
-
-    def with_log_level(self, log_level: str = "INFO") -> "MCPServerBuilder":
-        """
-        Set logging level.
-
-        Args:
-            log_level: Logging level (DEBUG, INFO, WARNING, ERROR)
-
-        Returns:
-            Self for method chaining
-        """
-        self.log_level = log_level
         return self
 
     def build(self) -> FastMCP:
@@ -110,10 +68,6 @@ class MCPServerBuilder:
             log_registration_summary(
                 registered_tools, len(self.tools_config), self.server_name
             )
-
-        # Configure server settings
-        self.server_instance.settings.debug = self.debug
-        self.server_instance.settings.log_level = self.log_level
 
         logger.info(f"{self.server_name} MCP server built successfully")
         return self.server_instance
@@ -162,9 +116,6 @@ def run_mcp_server(
     builder = MCPServerBuilder(server_name)
     builder.with_tools_config(tools_config)
 
-    if config:
-        builder.with_config(config)
-
     server = builder.build()
 
     # Configure transport settings
@@ -200,9 +151,6 @@ def create_mcp_app(
     # Build the server
     builder = MCPServerBuilder(server_name)
     builder.with_tools_config(tools_config)
-
-    if config:
-        builder.with_config(config)
 
     server = builder.build()
 
