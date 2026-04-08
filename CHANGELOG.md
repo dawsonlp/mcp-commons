@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.1.1] - 2026-04-08
+
+### Fixed
+- Reverted ruff and black `target-version` back to `py311` to match `requires-python = ">=3.11"`
+  - ruff 0.15.9 with py313 target enables UP046 which requires PEP 695 syntax (Python 3.12+)
+  - This caused CI lint failures on the v2.1.0 release
+
 ## [2.1.0] - 2026-04-08
 
 ### Changed
@@ -22,7 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated GitHub Actions workflow:
   - `setup-python@v4` -> `setup-python@v5`
   - Added `FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true` env variable
-- Updated tool target-version from py311 to py313
+- Updated ruff to 0.15.9 (latest, with py311 target for minimum version compatibility)
 
 ### Migration Notes
 - **No breaking changes** -- dependency update and build modernization only
@@ -313,7 +320,8 @@ removed = conditional_remove_tools(srv, lambda name: name.startswith("test_"))
 - MCPServerBuilder for standardized server setup
 - Core functionality for eliminating MCP server boilerplate
 
-[Unreleased]: https://github.com/dawsonlp/mcp-commons/compare/v2.1.0...HEAD
+[Unreleased]: https://github.com/dawsonlp/mcp-commons/compare/v2.1.1...HEAD
+[2.1.1]: https://github.com/dawsonlp/mcp-commons/compare/v2.1.0...v2.1.1
 [2.1.0]: https://github.com/dawsonlp/mcp-commons/compare/v2.0.0...v2.1.0
 [2.0.0]: https://github.com/dawsonlp/mcp-commons/compare/v1.3.4...v2.0.0
 [1.3.4]: https://github.com/dawsonlp/mcp-commons/compare/v1.3.3...v1.3.4

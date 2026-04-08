@@ -20,7 +20,7 @@ MCP Commons provides architectural patterns for building maintainable MCP server
 
 **Built on FastMCP**: mcp-commons is a thin wrapper over FastMCP's existing methods. It doesn't replace FastMCP's capabilities - it provides architectural patterns and convenience wrappers to make your code more maintainable.
 
-**Current Version**: 2.1.0 | [What's New](#whats-new-in-v210) | [Changelog](CHANGELOG.md)
+**Current Version**: 2.1.1 | [What's New](#whats-new-in-v211) | [Changelog](CHANGELOG.md)
 
 ---
 
@@ -565,7 +565,7 @@ For complete API documentation, see [API Reference](https://github.com/dawsonlp/
 
 ---
 
-## What's New in v2.1.0
+## What's New in v2.1.1
 
 ### Dependency Updates
 - ✅ MCP SDK updated to 1.27.0 (latest stable)
