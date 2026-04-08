@@ -7,6 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.1.0] - 2026-04-08
+
+### Changed
+- Updated production dependencies:
+  - **mcp**: 1.26.0 -> 1.27.0 (MCP SDK latest stable, 2026-04-02)
+- Updated dev dependencies:
+  - **pytest**: 9.0.2 -> 9.0.3 (2026-04-07)
+  - **pytest-cov**: 7.0.0 -> 7.1.0 (2026-03-21)
+  - **black**: 25.12.0 -> 26.3.1 (2026-03-12)
+  - **isort**: 7.0.0 -> 8.0.1 (2026-02-28)
+  - **ruff**: 0.14.8 -> 0.15.9 (2026-04-02)
+- Switched build backend from setuptools to hatchling (PEP 621 standard)
+- Updated GitHub Actions workflow:
+  - `setup-python@v4` -> `setup-python@v5`
+  - Added `FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true` env variable
+- Updated tool target-version from py311 to py313
+
+### Migration Notes
+- **No breaking changes** -- dependency update and build modernization only
+- To upgrade: `pip install --upgrade mcp-commons>=2.1.0`
+- All existing code continues to work without modifications
+
 ## [2.0.0] - 2026-02-18
 
 ### Removed (BREAKING)
@@ -291,7 +313,8 @@ removed = conditional_remove_tools(srv, lambda name: name.startswith("test_"))
 - MCPServerBuilder for standardized server setup
 - Core functionality for eliminating MCP server boilerplate
 
-[Unreleased]: https://github.com/dawsonlp/mcp-commons/compare/v2.0.0...HEAD
+[Unreleased]: https://github.com/dawsonlp/mcp-commons/compare/v2.1.0...HEAD
+[2.1.0]: https://github.com/dawsonlp/mcp-commons/compare/v2.0.0...v2.1.0
 [2.0.0]: https://github.com/dawsonlp/mcp-commons/compare/v1.3.4...v2.0.0
 [1.3.4]: https://github.com/dawsonlp/mcp-commons/compare/v1.3.3...v1.3.4
 [1.3.3]: https://github.com/dawsonlp/mcp-commons/compare/v1.3.2...v1.3.3

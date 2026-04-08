@@ -20,7 +20,7 @@ MCP Commons provides architectural patterns for building maintainable MCP server
 
 **Built on FastMCP**: mcp-commons is a thin wrapper over FastMCP's existing methods. It doesn't replace FastMCP's capabilities - it provides architectural patterns and convenience wrappers to make your code more maintainable.
 
-**Current Version**: 1.3.4 | [What's New](#whats-new-in-v134) | [Changelog](CHANGELOG.md)
+**Current Version**: 2.1.0 | [What's New](#whats-new-in-v210) | [Changelog](CHANGELOG.md)
 
 ---
 
@@ -120,7 +120,7 @@ This adapter pattern enables:
 ### Requirements
 
 - **Python**: 3.11+ (3.13 recommended)
-- **MCP SDK**: 1.26.0+
+- **MCP SDK**: 1.27.0+
 - **Dependencies**: Pydantic 2.12.5+, PyYAML 6.0.3+
 
 ### Install from PyPI
@@ -565,15 +565,16 @@ For complete API documentation, see [API Reference](https://github.com/dawsonlp/
 
 ---
 
-## What's New in v1.3.4
+## What's New in v2.1.0
 
-### Documentation Corrections
-- ✅ Fixed `__version__` in `__init__.py` (was stuck at 1.2.2)
-- ✅ Updated README.md with correct version references and dependency versions
-- ✅ Updated CHANGELOG.md reference links
-- ✅ All version references now consistent across codebase
+### Dependency Updates
+- ✅ MCP SDK updated to 1.27.0 (latest stable)
+- ✅ All dev dependencies updated to latest versions
+- ✅ Build backend switched from setuptools to hatchling (PEP 621)
+- ✅ GitHub Actions workflow modernized (Node.js 24, setup-python v5)
 
 ### Previous Highlights
+- **v2.0.0**: Breaking cleanup -- removed dead code, exceptions, unused methods
 - **v1.3.x**: Configuration management, error hierarchy, server builder
 - **v1.2.x**: Tool lifecycle management (remove, replace, inspect tools)
 - **v1.1.x**: Bulk registration, adapter pattern foundations
