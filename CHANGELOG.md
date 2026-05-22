@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.1.2] - 2026-05-22
+
+### Changed
+- Updated production dependencies:
+  - **pydantic**: 2.12.5 -> 2.13.4
+  - **mcp**: 1.27.0 -> 1.27.1
+- Updated dev dependencies:
+  - **black**: 26.3.1 -> 26.5.1
+  - **ruff**: 0.15.9 -> 0.15.14
+
 ## [2.1.1] - 2026-04-08
 
 ### Fixed
