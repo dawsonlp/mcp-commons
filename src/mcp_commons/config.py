@@ -258,10 +258,55 @@ class MCPConfig:
         return self.config_data.copy()
 
 
+def find_server_config(
+    server_name: str,
+    *,
+    filename: str = "config.yaml",
+    extra_locations: list[Path | str] | None = None,
+) -> Path | None:
+    """
+    Locate a server's config file using the mcp-manager-first lookup order.
+
+    Search order:
+      1. ~/.config/mcp-manager/servers/<server_name>/<filename>   (mcp-manager managed)
+      2. <extra_locations entries, in order>                       (caller-supplied)
+      3. ~/.config/<server_name>/<filename>                        (XDG per-server)
+      4. <cwd>/<filename>                                          (local dev)
+
+    Returns:
+        Path to the first existing file, or None if no candidate exists.
+        Callers typically pass the result into create_config(config_file=...).
+
+    Notes:
+        - The legacy ~/.mcp_servers/... path is *not* searched. Servers that
+          previously fell back to it should rely on the user reinstalling with
+          mcp-manager 1.2.0+, which migrates the config.yaml in place under
+          the new ~/.config/mcp-manager/ root.
+    """
+    candidates: list[Path] = [
+        Path.home() / ".config" / "mcp-manager" / "servers" / server_name / filename,
+    ]
+    if extra_locations:
+        candidates.extend(Path(p) for p in extra_locations)
+    candidates.extend(
+        [
+            Path.home() / ".config" / server_name / filename,
+            Path.cwd() / filename,
+        ]
+    )
+    for candidate in candidates:
+        if candidate.exists():
+            return candidate
+    return None
+
+
 def create_config(
-    config_file: str | None = None,
+    config_file: str | Path | None = None,
     env_prefix: str = "MCP",
     required_config: list[tuple] | None = None,
+    *,
+    server_name: str | None = None,
+    extra_locations: list[Path | str] | None = None,
 ) -> MCPConfig:
     """
     Create and validate a standardized MCP server configuration.
@@ -270,33 +315,42 @@ def create_config(
     that can be used across all MCP servers.
 
     Args:
-        config_file: Path to configuration file (optional)
-        env_prefix: Prefix for environment variables
-        required_config: List of (section, key) tuples for required config
+        config_file: Path to configuration file (optional). If given, wins
+            over server_name discovery.
+        env_prefix: Prefix for environment variables.
+        required_config: List of (section, key) tuples for required config.
+        server_name: If given (and config_file is None), use
+            find_server_config(server_name, extra_locations=...) to discover
+            the config file under ~/.config/mcp-manager/servers/<server_name>/.
+        extra_locations: Forwarded to find_server_config when server_name is set.
 
     Returns:
-        Configured MCPConfig instance
+        Configured MCPConfig instance.
 
     Raises:
-        ConfigurationError: If required configuration is missing
+        ConfigurationError: If required configuration is missing.
     """
-    # Look for common config file locations if not specified
-    if config_file is None:
+    resolved: str | None = str(config_file) if config_file is not None else None
+
+    if resolved is None and server_name is not None:
+        found = find_server_config(server_name, extra_locations=extra_locations)
+        if found is not None:
+            resolved = str(found)
+
+    if resolved is None:
         possible_locations = ["config.yaml", "config.yml", ".env.yaml", ".env.yml"]
         for location in possible_locations:
             if os.path.exists(location):
-                config_file = location
+                resolved = location
                 break
 
-    # Create configuration instance
-    config = MCPConfig(config_file=config_file, env_prefix=env_prefix)
+    config = MCPConfig(config_file=resolved, env_prefix=env_prefix)
 
-    # Validate required configuration if specified
     if required_config:
         config.validate_required(required_config)
 
     logger.info(
-        f"Configuration initialized (file: {config_file or 'none'}, prefix: {env_prefix})"
+        f"Configuration initialized (file: {resolved or 'none'}, prefix: {env_prefix})"
     )
     return config
 

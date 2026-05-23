@@ -7,7 +7,9 @@ and startup patterns that can be shared across all MCP servers.
 
 import logging
 import sys
-from typing import Any
+from logging import FileHandler, StreamHandler
+from pathlib import Path
+from typing import Any, TextIO
 
 from mcp.server.fastmcp import FastMCP
 
@@ -73,17 +75,40 @@ class MCPServerBuilder:
         return self.server_instance
 
 
-def setup_logging(log_level: str = "INFO") -> None:
+def setup_logging(
+    log_level: str = "INFO",
+    *,
+    stream: TextIO | None = None,
+    log_file: str | Path | None = None,
+    transport: str | None = None,
+) -> None:
     """
-    Set up standardized logging configuration for MCP servers.
+    Configure logging for an MCP server.
+
+    Default behavior is now stderr (was stdout). stdout corrupts the
+    JSON-RPC protocol when the server runs over stdio transport, which
+    is the dominant deployment shape for MCP servers.
 
     Args:
-        log_level: Logging level (DEBUG, INFO, WARNING, ERROR)
+        log_level: Logging level (DEBUG/INFO/WARNING/ERROR).
+        stream: Explicit stream to log to. Defaults to sys.stderr.
+            Pass sys.stdout only if you understand the stdio implication.
+            Ignored if log_file is set.
+        log_file: If set, log to this file via FileHandler instead of a stream.
+            Useful for SSE servers running as containers/daemons.
+        transport: Optional transport hint ("stdio" | "sse" | "streamable-http").
+            Reserved for future per-transport defaults; ignored today.
+            Callers should pass it for forward-compat.
     """
+    handler: logging.Handler
+    if log_file is not None:
+        handler = FileHandler(str(log_file), mode="a")
+    else:
+        handler = StreamHandler(stream if stream is not None else sys.stderr)
     logging.basicConfig(
         level=getattr(logging, log_level.upper()),
         format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-        handlers=[logging.StreamHandler(sys.stdout)],
+        handlers=[handler],
     )
 
 
@@ -218,3 +243,83 @@ For more information, see the MCP SDK documentation at:
 https://github.com/modelcontextprotocol/python-sdk
 """
     print(help_text)
+
+
+def run_cli(
+    server_name: str,
+    tools_config: dict[str, dict[str, Any]],
+    *,
+    description: str = "",
+    host: str = "localhost",
+    port: int = 7501,
+    transports: tuple[str, ...] = ("stdio", "sse"),
+    log_level: str = "INFO",
+    log_file: str | Path | None = None,
+    argv: list[str] | None = None,
+) -> None:
+    """
+    Standardized argv -> transport dispatcher for MCP server `main()` entry points.
+
+    Reads argv[0] (defaults to sys.argv[1:]) and:
+      - "help" / "--help" / "-h"  -> print_mcp_help and return
+      - "--transport <value>"     -> use <value> (jira-helper style)
+      - "<value>"                 -> use <value> (worldcontext style)
+      - anything else             -> print usage + sys.exit(2)
+
+    Valid transport values are constrained by the `transports` tuple. The
+    default ("stdio", "sse") covers the common case; jira-helper-style servers
+    can pass ("stdio", "sse", "streamable-http").
+
+    Logging is set up before the server runs:
+      - stdio transport             -> log to stderr (default)
+      - non-stdio transport         -> log to stderr OR log_file if provided
+
+    Args:
+        server_name: Name of the MCP server (passed to print_mcp_help and
+            internally to MCPServerBuilder).
+        tools_config: Tool registration dictionary (same shape as
+            run_mcp_server expects).
+        description: Optional short tagline shown by print_mcp_help.
+        host: Network bind address for non-stdio transports.
+        port: Network bind port for non-stdio transports.
+        transports: Whitelist of accepted transport names.
+        log_level: Forwarded to setup_logging.
+        log_file: Forwarded to setup_logging.
+        argv: Override sys.argv for tests. Pass the equivalent of sys.argv[1:].
+
+    Exit codes:
+        0  - server ran and exited cleanly
+        2  - bad transport argument (unknown or missing)
+    """
+    args = argv if argv is not None else sys.argv[1:]
+    if not args or args[0] in ("help", "--help", "-h"):
+        print_mcp_help(server_name, description or "MCP Server")
+        return
+
+    if args[0] == "--transport":
+        if len(args) < 2:
+            print("--transport requires a value", file=sys.stderr)
+            sys.exit(2)
+        transport = args[1]
+    else:
+        transport = args[0]
+
+    if transport not in transports:
+        print(
+            f"Unknown transport: {transport!r}. "
+            f"Valid choices: {', '.join(transports)} (or 'help').",
+            file=sys.stderr,
+        )
+        sys.exit(2)
+
+    setup_logging(log_level=log_level, log_file=log_file, transport=transport)
+
+    kwargs: dict[str, Any] = {
+        "server_name": server_name,
+        "tools_config": tools_config,
+        "transport": transport,
+    }
+    if transport != "stdio":
+        kwargs["host"] = host
+        kwargs["port"] = port
+    run_mcp_server(**kwargs)
