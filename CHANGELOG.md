@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.2.2] - 2026-05-22
+
+### Fixed
+- README links to `CHANGELOG.md` and `CONTRIBUTING.md` are now absolute
+  GitHub URLs instead of relative paths. PyPI renders the README on the
+  project page but cannot resolve relative repo paths, so the previous
+  links were broken there.
+
 ## [2.2.1] - 2026-05-22
 
 ### Changed

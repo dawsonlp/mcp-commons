@@ -20,7 +20,7 @@ MCP Commons provides architectural patterns for building maintainable MCP server
 
 **Built on FastMCP**: mcp-commons is a thin wrapper over FastMCP's existing methods. It doesn't replace FastMCP's capabilities - it provides architectural patterns and convenience wrappers to make your code more maintainable.
 
-**Current Version**: 2.2.0 | [What's New](#whats-new-in-v220) | [Changelog](CHANGELOG.md)
+**Current Version**: 2.2.2 | [What's New](#whats-new-in-v220) | [Changelog](https://github.com/dawsonlp/mcp-commons/blob/main/CHANGELOG.md)
 
 ---
 
@@ -583,13 +583,13 @@ For complete API documentation, see [API Reference](https://github.com/dawsonlp/
 - **v1.2.x**: Tool lifecycle management (remove, replace, inspect tools)
 - **v1.1.x**: Bulk registration, adapter pattern foundations
 
-See [CHANGELOG.md](CHANGELOG.md) for complete version history.
+See [CHANGELOG.md](https://github.com/dawsonlp/mcp-commons/blob/main/CHANGELOG.md) for complete version history.
 
 ---
 
 ## Contributing
 
-Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+Contributions are welcome! Please see [CONTRIBUTING.md](https://github.com/dawsonlp/mcp-commons/blob/main/CONTRIBUTING.md) for guidelines.
 
 ### Development Setup
 
@@ -622,7 +622,7 @@ ruff check src/ tests/
 
 ## License
 
-MIT License - see [LICENSE](LICENSE) for details.
+MIT License - see [LICENSE](https://github.com/dawsonlp/mcp-commons/blob/main/LICENSE) for details.
 
 ---
 
