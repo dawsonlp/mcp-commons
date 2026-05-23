@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.2.1] - 2026-05-22
+
+### Changed
+- README refreshed to reflect v2.2.0 (server helpers + setup_logging
+  stderr fix). The README on PyPI now describes the current API rather
+  than the v2.1.1 dependency-update release. No code changes.
+
 ## [2.2.0] - 2026-05-22
 
 ### Added

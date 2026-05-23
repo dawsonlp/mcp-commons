@@ -20,7 +20,7 @@ MCP Commons provides architectural patterns for building maintainable MCP server
 
 **Built on FastMCP**: mcp-commons is a thin wrapper over FastMCP's existing methods. It doesn't replace FastMCP's capabilities - it provides architectural patterns and convenience wrappers to make your code more maintainable.
 
-**Current Version**: 2.1.1 | [What's New](#whats-new-in-v211) | [Changelog](CHANGELOG.md)
+**Current Version**: 2.2.0 | [What's New](#whats-new-in-v220) | [Changelog](CHANGELOG.md)
 
 ---
 
@@ -565,15 +565,19 @@ For complete API documentation, see [API Reference](https://github.com/dawsonlp/
 
 ---
 
-## What's New in v2.1.1
+## What's New in v2.2.0
 
-### Dependency Updates
-- ✅ MCP SDK updated to 1.27.0 (latest stable)
-- ✅ All dev dependencies updated to latest versions
-- ✅ Build backend switched from setuptools to hatchling (PEP 621)
-- ✅ GitHub Actions workflow modernized (Node.js 24, setup-python v5)
+### Server helpers (additive)
+- ✅ `find_server_config(server_name, ...)` — config-file discovery using the mcp-manager-first lookup order
+- ✅ `create_config(server_name=..., ...)` — auto-discovers the config file when `server_name` is given
+- ✅ `run_cli(server_name, tools_config, ...)` — argv → transport dispatcher for MCP server `main()` entry points
+- ✅ `setup_logging(*, stream, log_file, transport)` — keyword-only options for stream/file/transport
+
+### Bug fix
+- 🐛 `setup_logging` now defaults to `sys.stderr` (was `sys.stdout`). stdout is the JSON-RPC channel for stdio-transport MCP servers, and logging there silently corrupts the protocol.
 
 ### Previous Highlights
+- **v2.1.x**: Dependency refresh (MCP SDK 1.27.1, pydantic 2.13.4), hatchling build backend
 - **v2.0.0**: Breaking cleanup -- removed dead code, exceptions, unused methods
 - **v1.3.x**: Configuration management, error hierarchy, server builder
 - **v1.2.x**: Tool lifecycle management (remove, replace, inspect tools)
