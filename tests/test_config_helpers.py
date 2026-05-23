@@ -120,9 +120,7 @@ class TestCreateConfigServerNameDiscovery:
     """Verify the new server_name kwarg in create_config."""
 
     def test_loads_from_mcp_manager_path(self, fake_home, fake_cwd):
-        target = (
-            fake_home / ".config" / "mcp-manager" / "servers" / "x" / "config.yaml"
-        )
+        target = fake_home / ".config" / "mcp-manager" / "servers" / "x" / "config.yaml"
         target.parent.mkdir(parents=True)
         target.write_text("server:\n  name: from-file\n")
 
