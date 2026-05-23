@@ -7,6 +7,41 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.2.0] - 2026-05-22
+
+### Added
+- `find_server_config(server_name, *, filename, extra_locations)` — discovers
+  a server's config file using the mcp-manager-first lookup order
+  (`~/.config/mcp-manager/servers/<name>/<filename>` → caller extras → XDG → CWD).
+  Replaces ~25-60 lines of hand-rolled `find_config_file()` in each consuming
+  MCP server.
+- `create_config(server_name=..., extra_locations=...)` — auto-discovers the
+  config file when `server_name` is given. Existing positional/keyword calls
+  unaffected.
+- `run_cli(server_name, tools_config, *, transports, host, port, log_level,
+  log_file, argv)` — argv-driven dispatcher for MCP server `main()` entry
+  points. Handles `help` / `--help` / `-h`, the bare `<transport>` and
+  `--transport <value>` forms, validates against an allowed-transports
+  whitelist, configures logging, and delegates to `run_mcp_server`.
+- `setup_logging(*, stream, log_file, transport)` — new keyword-only options.
+  `stream` lets callers route to any TextIO; `log_file` opts into a
+  FileHandler; `transport` is reserved for future per-transport defaults.
+
+### Fixed
+- `setup_logging` now defaults to `sys.stderr` instead of `sys.stdout`.
+  stdout is the JSON-RPC channel for MCP servers running over stdio
+  transport; logging to stdout corrupts the protocol and causes hosts
+  (Cline, Claude Desktop) to silently truncate responses. Consumers that
+  genuinely want stdout-logging must now pass `stream=sys.stdout` explicitly.
+
+### Notes
+- `run_mcp_server` still calls `setup_logging()` implicitly. This is unchanged
+  in 2.2.0 to keep the release non-breaking, but consumers using the new
+  `run_cli` end up calling `setup_logging` twice in succession (the second
+  call is a no-op because `logging.basicConfig` skips when handlers are
+  configured). A future release may drop the implicit call inside
+  `run_mcp_server`.
+
 ## [2.1.2] - 2026-05-22
 
 ### Changed

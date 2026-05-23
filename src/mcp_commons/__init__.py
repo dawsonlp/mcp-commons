@@ -22,16 +22,23 @@ from .bulk_registration import (
     tool_exists,
     validate_tools_config,
 )
-from .config import ConfigurationError, MCPConfig, create_config, load_dotenv_file
+from .config import (
+    ConfigurationError,
+    MCPConfig,
+    create_config,
+    find_server_config,
+    load_dotenv_file,
+)
 from .server import (
     MCPServerBuilder,
     create_mcp_app,
     print_mcp_help,
+    run_cli,
     run_mcp_server,
     setup_logging,
 )
 
-__version__ = "2.1.1"
+__version__ = "2.2.0"
 __all__ = [
     # Core adapter functionality
     "create_mcp_adapter",
@@ -60,11 +67,13 @@ __all__ = [
     "MCPServerBuilder",
     "setup_logging",
     "run_mcp_server",
+    "run_cli",
     "create_mcp_app",
     "print_mcp_help",
     # Configuration management
     "MCPConfig",
     "ConfigurationError",
     "create_config",
+    "find_server_config",
     "load_dotenv_file",
 ]
