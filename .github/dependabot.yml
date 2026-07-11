@@ -1,0 +1,22 @@
+version: 2
+updates:
+  # Keep GitHub Actions current. This is what prevents an untouched repo from
+  # rotting: when an action drops an old Node runtime (or bumps a major),
+  # Dependabot opens a reviewable PR instead of the workflow silently aging
+  # into a deprecation warning and, eventually, a hard failure.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    groups:
+      github-actions:
+        patterns: ["*"]
+
+  # Keep Python runtime/dev dependencies current (pyproject.toml).
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    groups:
+      python-deps:
+        patterns: ["*"]
