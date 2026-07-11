@@ -226,14 +226,13 @@ class TestCreateMcpAdapter:
     async def test_successful_adaptation(self):
         """Test adapter with successful use case result."""
         async def sample_use_case() -> UseCaseResult:
-            return UseCaseResult.success_with_data({"value": 42})
+            return UseCaseResult.succeeded({"value": 42})
         
         adapter = create_mcp_adapter(sample_use_case)
         result = await adapter()
         
-        assert result["success"] is True
-        assert result["data"]["value"] == 42
-        assert result["error"] is None
+        # On success the adapter returns the result's data directly
+        assert result == {"value": 42}
 ```
 
 ### Running Tests

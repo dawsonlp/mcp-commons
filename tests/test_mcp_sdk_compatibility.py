@@ -91,7 +91,7 @@ class TestBackwardCompatibility:
         from mcp_commons import UseCaseResult, create_mcp_adapter
 
         async def sample_use_case() -> UseCaseResult:
-            return UseCaseResult.success({"message": "test"})
+            return UseCaseResult.succeeded({"message": "test"})
 
         # Should create adapter without errors
         adapted = create_mcp_adapter(sample_use_case)

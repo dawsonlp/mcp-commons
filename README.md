@@ -20,7 +20,7 @@ MCP Commons provides architectural patterns for building maintainable MCP server
 
 **Built on FastMCP**: mcp-commons is a thin wrapper over FastMCP's existing methods. It doesn't replace FastMCP's capabilities - it provides architectural patterns and convenience wrappers to make your code more maintainable.
 
-**Current Version**: 2.2.2 | [What's New](#whats-new-in-v220) | [Changelog](https://github.com/dawsonlp/mcp-commons/blob/main/CHANGELOG.md)
+**Current Version**: 3.0.0 | [What's New](#whats-new-in-v300) | [Changelog](https://github.com/dawsonlp/mcp-commons/blob/main/CHANGELOG.md)
 
 ---
 
@@ -120,8 +120,8 @@ This adapter pattern enables:
 ### Requirements
 
 - **Python**: 3.11+ (3.13 recommended)
-- **MCP SDK**: 1.27.0+
-- **Dependencies**: Pydantic 2.12.5+, PyYAML 6.0.3+
+- **MCP SDK**: 1.28.1+
+- **Dependencies**: Pydantic 2.13.4+, PyYAML 6.0.3+
 
 ### Install from PyPI
 
@@ -172,7 +172,7 @@ server = FastMCP("my-server")
 async def search_documents(query: str, limit: int = 10) -> UseCaseResult:
     """Search documents with natural language query."""
     results = await document_service.search(query, limit)
-    return UseCaseResult.success_with_data({
+    return UseCaseResult.succeeded({
         "results": results,
         "count": len(results)
     })
@@ -263,11 +263,11 @@ async def calculate_metrics(dataset_id: str) -> UseCaseResult:
     try:
         data = await load_dataset(dataset_id)
         metrics = compute_metrics(data)
-        return UseCaseResult.success_with_data(metrics)
+        return UseCaseResult.succeeded(metrics)
     except DatasetNotFoundError as e:
-        return UseCaseResult.failure(f"Dataset not found: {e}")
+        return UseCaseResult.failed(f"Dataset not found: {e}")
     except Exception as e:
-        return UseCaseResult.failure(f"Calculation failed: {e}")
+        return UseCaseResult.failed(f"Calculation failed: {e}")
 
 # Create adapter
 adapted = create_mcp_adapter(calculate_metrics)
@@ -280,16 +280,16 @@ async def metrics(dataset_id: str) -> dict:
 
 #### Error Handling
 
-Adapters provide consistent error responses:
+`UseCaseResult` gives every operation a consistent success/failure shape (the adapter then unwraps a successful result's `data` and reports failures as a `{"success": False, ...}` dict):
 
 ```python
 # Success response
-UseCaseResult.success_with_data({"status": "completed", "value": 42})
-# Returns: {"success": True, "data": {...}, "error": None}
+UseCaseResult.succeeded({"status": "completed", "value": 42})
+# -> UseCaseResult(success=True, data={"status": "completed", "value": 42}, error=None)
 
 # Failure response  
-UseCaseResult.failure("Invalid input parameters")
-# Returns: {"success": False, "data": None, "error": "Invalid input parameters"}
+UseCaseResult.failed("Invalid input parameters")
+# -> UseCaseResult(success=False, data=None, error="Invalid input parameters")
 ```
 
 ### Bulk Registration
@@ -329,10 +329,11 @@ registered = bulk_register_tools(server, tools_config)
 ```python
 from mcp_commons import bulk_register_tuple_format
 
+# Each tuple is (function, name, description)
 tools = [
-    ("list_items", list_items_function),
-    ("get_item", get_item_function),
-    ("create_item", create_item_function),
+    (list_items_function, "list_items", "List all items"),
+    (get_item_function, "get_item", "Get an item by ID"),
+    (create_item_function, "create_item", "Create a new item"),
 ]
 
 bulk_register_tuple_format(server, tools)
@@ -343,11 +344,12 @@ bulk_register_tuple_format(server, tools)
 ```python
 from mcp_commons import bulk_register_with_adapter_pattern
 
-# All functions return UseCaseResult
+# Each entry maps a tool name to {"use_case": <async callable returning
+# UseCaseResult>, "description": <str>}.
 use_cases = {
-    "validate_data": validate_data_use_case,
-    "process_data": process_data_use_case,
-    "export_data": export_data_use_case,
+    "validate_data": {"use_case": validate_data_use_case, "description": "Validate a dataset"},
+    "process_data": {"use_case": process_data_use_case, "description": "Process a dataset"},
+    "export_data": {"use_case": export_data_use_case, "description": "Export a dataset"},
 }
 
 bulk_register_with_adapter_pattern(
@@ -451,26 +453,26 @@ print(f"Total tools registered: {total}")
 ```python
 from mcp_commons import create_mcp_adapter
 
-def custom_success_handler(result):
-    """Custom formatting for successful results."""
+def custom_success_handler(data):
+    """Receives the successful result's `.data` value."""
     return {
         "status": "success",
-        "payload": result.data,
+        "payload": data,
         "timestamp": datetime.now().isoformat()
     }
 
-def custom_error_handler(result):
-    """Custom formatting for errors."""
+def custom_error_handler(error):
+    """Receives an Exception raised by the use case."""
     return {
         "status": "error",
-        "message": result.error,
+        "message": str(error),
         "timestamp": datetime.now().isoformat()
     }
 
 adapted = create_mcp_adapter(
     my_function,
-    success_handler=custom_success_handler,
-    error_handler=custom_error_handler
+    custom_success_handler=custom_success_handler,
+    custom_error_handler=custom_error_handler
 )
 ```
 
@@ -479,11 +481,10 @@ adapted = create_mcp_adapter(
 ```python
 from mcp_commons import validate_tools_config, log_registration_summary
 
-# Validate before registering
-try:
-    validate_tools_config(tools_config)
-except ValueError as e:
-    print(f"Invalid configuration: {e}")
+# Validate before registering (returns a report dict; it never raises)
+validation = validate_tools_config(tools_config)
+if not validation["valid"]:
+    print(f"Invalid configuration: {validation['issues']}")
     
 # Register with logging
 registered = bulk_register_tools(server, tools_config)
@@ -500,13 +501,14 @@ from mcp_commons import create_mcp_adapter, UseCaseResult
 async def test_search_tool():
     """Test search tool with adapter."""
     async def mock_search(query: str) -> UseCaseResult:
-        return UseCaseResult.success_with_data({"results": ["doc1", "doc2"]})
+        return UseCaseResult.succeeded({"results": ["doc1", "doc2"]})
     
     adapted = create_mcp_adapter(mock_search)
     result = await adapted(query="test")
     
-    assert result["success"] is True
-    assert len(result["data"]["results"]) == 2
+    # On success the adapter returns the result's data directly
+    assert result == {"results": ["doc1", "doc2"]}
+    assert len(result["results"]) == 2
 ```
 
 ---
@@ -519,9 +521,9 @@ async def test_search_tool():
 Converts an async function to an MCP-compatible tool adapter.
 
 **Parameters:**
-- `use_case` (callable): Async function returning `UseCaseResult`
-- `success_handler` (callable, optional): Custom success formatter
-- `error_handler` (callable, optional): Custom error formatter
+- `use_case_method` (callable): Async function returning `UseCaseResult`
+- `custom_success_handler` (callable, optional, keyword-only): Receives the result's `data`; returns the response dict
+- `custom_error_handler` (callable, optional, keyword-only): Receives a raised `Exception`; returns the response dict
 
 **Returns:** Async callable compatible with MCP tools
 
@@ -565,18 +567,21 @@ For complete API documentation, see [API Reference](https://github.com/dawsonlp/
 
 ---
 
-## What's New in v2.2.0
+## What's New in v3.0.0
 
-### Server helpers (additive)
-- ✅ `find_server_config(server_name, ...)` — config-file discovery using the mcp-manager-first lookup order
-- ✅ `create_config(server_name=..., ...)` — auto-discovers the config file when `server_name` is given
-- ✅ `run_cli(server_name, tools_config, ...)` — argv → transport dispatcher for MCP server `main()` entry points
-- ✅ `setup_logging(*, stream, log_file, transport)` — keyword-only options for stream/file/transport
+### Breaking changes
+- ⚠️ `UseCaseResult.success()` / `.failure()` are renamed to `.succeeded()` / `.failed()`. The old `success` classmethod collided with the `success` field, leaving the field without a real default; the rename restores correct dataclass semantics. The `.success` / `.data` / `.error` / `.details` attributes are unchanged.
+- ⚠️ `run_mcp_server()` and `create_mcp_app()` no longer accept the unused `config` parameter (it was silently ignored).
+- ⚠️ `run_mcp_server()` no longer configures logging itself — that is the caller's job. `run_cli()` still sets up logging before delegating, so the common entry point is unaffected.
 
-### Bug fix
-- 🐛 `setup_logging` now defaults to `sys.stderr` (was `sys.stdout`). stdout is the JSON-RPC channel for stdio-transport MCP servers, and logging there silently corrupts the protocol.
+### Additive
+- ✅ The convenience adapters are now exported from the top-level package: `create_query_adapter`, `create_command_adapter`, `create_validation_adapter`, `create_mock_adapter`, `get_adapter_stats`.
+
+### Dependency refresh
+- ⬆️ MCP SDK 1.28.1, pytest 9.1.1, pytest-asyncio 1.4.0, ruff 0.15.21.
 
 ### Previous Highlights
+- **v2.2.x**: Server helpers (`find_server_config`, `run_cli`, `create_config(server_name=...)`, keyword-only `setup_logging`) and the `setup_logging` stderr default fix
 - **v2.1.x**: Dependency refresh (MCP SDK 1.27.1, pydantic 2.13.4), hatchling build backend
 - **v2.0.0**: Breaking cleanup -- removed dead code, exceptions, unused methods
 - **v1.3.x**: Configuration management, error hierarchy, server builder

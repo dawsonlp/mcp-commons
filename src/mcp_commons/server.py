@@ -115,7 +115,6 @@ def setup_logging(
 def run_mcp_server(
     server_name: str,
     tools_config: dict[str, dict[str, Any]],
-    config: dict[str, Any] | None = None,
     transport: str = "sse",
     host: str = "localhost",
     port: int = 7501,
@@ -126,17 +125,18 @@ def run_mcp_server(
     This function eliminates boilerplate server startup code that's common
     across all MCP server implementations.
 
+    Logging is not configured here — that is the caller's responsibility, so
+    a library call never hijacks the root logger. run_cli() sets up logging
+    before delegating to this function; direct callers should call
+    setup_logging() first if they want log output.
+
     Args:
         server_name: Name of the MCP server
         tools_config: Dictionary mapping tool names to their configuration
-        config: Optional server configuration dictionary
         transport: Transport type ("sse" or "stdio")
         host: Host for SSE transport (default: localhost)
         port: Port for SSE transport (default: 7501)
     """
-    # Set up logging
-    setup_logging()
-
     # Build the server
     builder = MCPServerBuilder(server_name)
     builder.with_tools_config(tools_config)
@@ -158,7 +158,6 @@ def run_mcp_server(
 def create_mcp_app(
     server_name: str,
     tools_config: dict[str, dict[str, Any]],
-    config: dict[str, Any] | None = None,
 ) -> Any:
     """
     Create an ASGI application for use with an external ASGI server.
@@ -168,7 +167,6 @@ def create_mcp_app(
     Args:
         server_name: Name of the MCP server
         tools_config: Dictionary mapping tool names to their configuration
-        config: Optional server configuration dictionary
 
     Returns:
         ASGI application instance

@@ -193,7 +193,7 @@ def validate_use_case_result(result: Any) -> bool:
         True if result is a valid UseCaseResult, False otherwise
 
     Example:
-        >>> result = UseCaseResult.success(data={"test": "data"})
+        >>> result = UseCaseResult.succeeded(data={"test": "data"})
         >>> assert validate_use_case_result(result)
     """
     if not isinstance(result, UseCaseResult):

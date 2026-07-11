@@ -5,7 +5,16 @@ This library provides reusable components for building MCP (Model Context Protoc
 eliminating boilerplate and ensuring consistency across server implementations.
 """
 
-from .adapters import AdapterStats, create_mcp_adapter, validate_use_case_result
+from .adapters import (
+    AdapterStats,
+    create_command_adapter,
+    create_mcp_adapter,
+    create_mock_adapter,
+    create_query_adapter,
+    create_validation_adapter,
+    get_adapter_stats,
+    validate_use_case_result,
+)
 from .base import BaseUseCase, UseCaseFactory, UseCaseResult
 from .bulk_registration import (
     BulkRegistrationError,
@@ -38,12 +47,18 @@ from .server import (
     setup_logging,
 )
 
-__version__ = "2.2.2"
+__version__ = "3.0.0"
 __all__ = [
     # Core adapter functionality
     "create_mcp_adapter",
     "validate_use_case_result",
     "AdapterStats",
+    # Specialized / convenience adapters
+    "create_query_adapter",
+    "create_command_adapter",
+    "create_validation_adapter",
+    "create_mock_adapter",
+    "get_adapter_stats",
     # Base classes
     "UseCaseResult",
     "BaseUseCase",

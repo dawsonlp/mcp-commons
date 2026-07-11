@@ -7,6 +7,47 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.0.0] - 2026-07-10
+
+### Changed (breaking)
+- `UseCaseResult.success()` / `UseCaseResult.failure()` constructors are renamed
+  to `UseCaseResult.succeeded()` / `UseCaseResult.failed()`. The old `success`
+  classmethod collided with the `success: bool` field: the field silently
+  inherited the bound method as its default, so `UseCaseResult()` did not
+  require `success` and `dataclasses.fields()` reported a bogus default. With
+  the rename, `success` is once again a required field with correct dataclass
+  semantics. The `.success` / `.data` / `.error` / `.details` attributes are
+  unchanged.
+
+  Migration: replace `UseCaseResult.success(...)` → `UseCaseResult.succeeded(...)`
+  and `UseCaseResult.failure(...)` → `UseCaseResult.failed(...)`.
+- `run_mcp_server()` and `create_mcp_app()` no longer accept the `config`
+  parameter. It was accepted but never used (silently ignored), so passing it
+  gave a false impression of effect. Remove `config=...` from any call site.
+- `run_mcp_server()` no longer calls `setup_logging()` internally. Configuring
+  the root logger is the caller's responsibility so a library call cannot
+  hijack global logging state. `run_cli()` still configures logging before
+  delegating, so the common entry point is unaffected; direct callers of
+  `run_mcp_server()` that relied on implicit logging should call
+  `setup_logging()` first.
+
+### Added
+- The convenience adapters are now part of the public top-level API (exported
+  from `mcp_commons`): `create_query_adapter`, `create_command_adapter`,
+  `create_validation_adapter`, `create_mock_adapter`, and `get_adapter_stats`.
+  Previously they were importable only from `mcp_commons.adapters` despite
+  being public.
+
+### Fixed
+- README examples used the nonexistent `UseCaseResult.success_with_data(...)`
+  method and would have raised `AttributeError`. They now use the real
+  constructor (`succeeded`).
+
+### Dependencies
+- Bumped to latest releases: `mcp>=1.28.1` (was 1.27.1), `pytest>=9.1.1`
+  (was 9.0.3), `pytest-asyncio>=1.4.0` (was 1.3.0), `ruff>=0.15.21`
+  (was 0.15.14).
+
 ## [2.2.2] - 2026-05-22
 
 ### Fixed

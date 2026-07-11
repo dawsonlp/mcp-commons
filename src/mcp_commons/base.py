@@ -27,12 +27,12 @@ class UseCaseResult(Generic[T]):
     details: dict[str, Any] | None = None
 
     @classmethod
-    def success(cls, data: T | None = None, **details) -> "UseCaseResult[T]":
+    def succeeded(cls, data: T | None = None, **details) -> "UseCaseResult[T]":
         """Create a successful result, optionally with data."""
         return cls(success=True, data=data, details=details if details else None)
 
     @classmethod
-    def failure(cls, error: str, **details) -> "UseCaseResult[T]":
+    def failed(cls, error: str, **details) -> "UseCaseResult[T]":
         """Create a failed result with error message."""
         return cls(success=False, error=error, details=details if details else None)
 
@@ -84,7 +84,7 @@ class BaseUseCase:
         """Handle exceptions consistently."""
         self._log_error(operation, error, **context)
 
-        return UseCaseResult.failure(error=str(error), operation=operation, **context)
+        return UseCaseResult.failed(error=str(error), operation=operation, **context)
 
 
 class UseCaseFactory:
