@@ -20,7 +20,7 @@ MCP Commons provides architectural patterns for building maintainable MCP server
 
 **Built on FastMCP**: mcp-commons is a thin wrapper over FastMCP's existing methods. It doesn't replace FastMCP's capabilities - it provides architectural patterns and convenience wrappers to make your code more maintainable.
 
-**Current Version**: 3.0.0 | [What's New](#whats-new-in-v300) | [Changelog](https://github.com/dawsonlp/mcp-commons/blob/main/CHANGELOG.md)
+**Current Version**: 3.0.1 | [What's New](#whats-new-in-v301) | [Changelog](https://github.com/dawsonlp/mcp-commons/blob/main/CHANGELOG.md)
 
 ---
 
@@ -120,7 +120,7 @@ This adapter pattern enables:
 ### Requirements
 
 - **Python**: 3.11+ (3.13 recommended)
-- **MCP SDK**: 1.28.1+
+- **MCP SDK**: 1.28.1 or newer within the 1.x release line (`>=1.28.1,<2.0.0`)
 - **Dependencies**: Pydantic 2.13.4+, PyYAML 6.0.3+
 
 ### Install from PyPI
@@ -567,17 +567,16 @@ For complete API documentation, see [API Reference](https://github.com/dawsonlp/
 
 ---
 
-## What's New in v3.0.0
+## What's New in v3.0.1
 
-### Breaking changes
+### Compatibility fix
+- ✅ MCP SDK constrained to the compatible 1.x release line (`>=1.28.1,<2.0.0`).
+
+### Previous v3.0.0 highlights
 - ⚠️ `UseCaseResult.success()` / `.failure()` are renamed to `.succeeded()` / `.failed()`. The old `success` classmethod collided with the `success` field, leaving the field without a real default; the rename restores correct dataclass semantics. The `.success` / `.data` / `.error` / `.details` attributes are unchanged.
 - ⚠️ `run_mcp_server()` and `create_mcp_app()` no longer accept the unused `config` parameter (it was silently ignored).
 - ⚠️ `run_mcp_server()` no longer configures logging itself — that is the caller's job. `run_cli()` still sets up logging before delegating, so the common entry point is unaffected.
-
-### Additive
 - ✅ The convenience adapters are now exported from the top-level package: `create_query_adapter`, `create_command_adapter`, `create_validation_adapter`, `create_mock_adapter`, `get_adapter_stats`.
-
-### Dependency refresh
 - ⬆️ MCP SDK 1.28.1, pytest 9.1.1, pytest-asyncio 1.4.0, ruff 0.15.21.
 
 ### Previous Highlights

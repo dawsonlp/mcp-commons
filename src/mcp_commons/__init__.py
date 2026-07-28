@@ -47,7 +47,7 @@ from .server import (
     setup_logging,
 )
 
-__version__ = "3.0.0"
+__version__ = "3.0.1"
 __all__ = [
     # Core adapter functionality
     "create_mcp_adapter",

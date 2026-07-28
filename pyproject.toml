@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "mcp-commons"
-version = "3.0.0"
+version = "3.0.1"
 description = "Shared infrastructure library for MCP (Model Context Protocol) servers"
 authors = [
     {name = "MCP Commons Contributors"}
@@ -25,7 +25,7 @@ classifiers = [
 dependencies = [
     "pydantic>=2.13.4",
     "PyYAML>=6.0.3",
-    "mcp>=1.28.1",
+    "mcp>=1.28.1,<2.0.0",
 ]
 
 [project.optional-dependencies]

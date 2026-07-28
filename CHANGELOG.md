@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.0.1] - 2026-07-27
+
+### Fixed
+- Constrained the MCP SDK dependency to `>=1.28.1,<2.0.0`; MCP SDK 2.x is not
+  compatible with the project's current integration.
+
 ## [3.0.0] - 2026-07-10
 
 ### Changed (breaking)
@@ -421,7 +427,8 @@ removed = conditional_remove_tools(srv, lambda name: name.startswith("test_"))
 - MCPServerBuilder for standardized server setup
 - Core functionality for eliminating MCP server boilerplate
 
-[Unreleased]: https://github.com/dawsonlp/mcp-commons/compare/v2.1.1...HEAD
+[Unreleased]: https://github.com/dawsonlp/mcp-commons/compare/v3.0.1...HEAD
+[3.0.1]: https://github.com/dawsonlp/mcp-commons/compare/v3.0.0...v3.0.1
 [2.1.1]: https://github.com/dawsonlp/mcp-commons/compare/v2.1.0...v2.1.1
 [2.1.0]: https://github.com/dawsonlp/mcp-commons/compare/v2.0.0...v2.1.0
 [2.0.0]: https://github.com/dawsonlp/mcp-commons/compare/v1.3.4...v2.0.0
